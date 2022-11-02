@@ -208,7 +208,7 @@ paddlex --data_conversion --source jingling --to ImageNet --pics ./pics --annota
 paddlex --split_dataset --format ImageNet --dataset_dir ./converted_dataset_dir --val_value 0.2 --test_value 0.1
 ```
 
-执行上面命令行，会在./converted_dataset_dir下生成 labels.txt, train_list.txt`, `val_list.txt`, `test_list.txt`，分别存储训练样本信息，验证样本信息，测试样本信息
+执行上面命令行，会在./converted_dataset_dir下生成 labels.txt, train_list.txt, val_list.txt, test_list.txt，分别存储训练样本信息，验证样本信息，测试样本信息
 
 至此我们的数据就创作完成了，最终我们的产出形态应如下所示
 
@@ -237,7 +237,7 @@ paddlex --split_dataset --format ImageNet --dataset_dir ./converted_dataset_dir 
 
 - 文件夹converted_dataset_dir为数据目录、class1为类别1图像所在目录、class2为类别2图像所在目录。其中converted_dataset_dir命名不是必须的，用户可以自主进行命名。
 
-- 其中labels.txt的内容如下所示
+- 其中labels.txt的内容如下所示(即包含数据集中实际分类名称的文件)
 
   ```txt
   class1
@@ -264,11 +264,11 @@ class2/image1.jpg 1
 
 ### 3.1.1 训练前准备
 
-我们可以通过PaddleClas提供的脚本对模型进行训练，在本小节中我们使用`PP-LCNet模型与`flowers102数据集展示训练过程。 在训练之前，最重要的修改自己的数据情况，确保能够正常训练。
+我们可以通过PaddleClas提供的脚本对模型进行训练，在本小节中我们使用PP-LCNet模型与flowers102数据集展示训练过程。 在训练之前，最重要的修改自己的数据情况，确保能够正常训练。
 
 在本项目中，我们使用PaddleClas/ppcls/configs/ImageNet/PPLCNet/PPLCNet_x1_0.yaml进行训练。
 
-我们需要修改PaddleClas/ppcls/configs/ImageNet/PPLCNet/PPLCNet_x1_0.yaml中数据集的路径、模型的分类数（class_num）、模型类别id与实际类别映射文件（flowers102_label_list.txt--包含类别名的文件即可，文件名不固定）以及预测后处理输出类别（设置每张图像只输出1个类别），修改为如下内容。
+我们需要修改PaddleClas/ppcls/configs/ImageNet/PPLCNet/PPLCNet_x1_0.yaml中数据集的路径、模型的分类数（class_num）、模型类别id与实际类别映射文件（flowers102_label_list.txt--包含数据集中实际分类名称的文件，文件名不固定）以及预测后处理输出类别（设置每张图像只输出1个类别），修改为如下内容。
 
 ```yaml
 # model architecture
@@ -354,6 +354,16 @@ cd dataset/
 wget https://paddle-imagenet-models-name.bj.bcebos.com/data/flowers102.zip
 # 解压
 unzip flowers102.zip
+# 文件结构
+# |-- dataset
+# | | -- flowers102
+# | | | -- jpg
+# | | | | -- image1.jpg
+# | | | | -- ...
+# | | | -- flowers102_label_list.txt
+# | | | -- ...
+# | | | -- train_list.txt
+# | | | -- val_list.txt
 # 回到PaddleClas目录
 cd ../
 ```
@@ -457,7 +467,7 @@ visualdl --logdir outputs/vdl
 
 ### 3.2.1 评估操作
 
-训练完成后，用户可以使用评估脚本tools/eval.py来评估模型效果。假设训练过程中迭代轮次（epochs）为40，保存模型的间隔为2，即每迭代2个轮次的数据集就会保存1次训练的模型。因此一共会产生20个定期保存的模型，加上保存的最佳模型`best_model`以及最近保存的模型latest，一共有22个模型，可以通过`-o Global.pretrained_model`指定期望评估的模型文件。
+训练完成后，用户可以使用评估脚本tools/eval.py来评估模型效果。假设训练过程中迭代轮次（epochs）为40，保存模型的间隔为2，即每迭代2个轮次的数据集就会保存1次训练的模型。因此一共会产生20个定期保存的模型，加上保存的最佳模型`best_model`以及最近保存的模型`latest`，一共有22个模型，可以通过`-o Global.pretrained_model`指定期望评估的模型文件。
 
 ```bash
 python tools/eval.py \
