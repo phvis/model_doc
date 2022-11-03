@@ -1,11 +1,11 @@
 # 概述
 
-本文重点介绍如何利用飞桨图像分类套件**PaddleClas**在flowers102 数据集上，使用当前PaddleClas主推的PP-LCNet模型进行详细讲解。
-PP-LCNet模型是PaddleClas团队自研的轻量级分类模型，模型结构如下。
+本文重点介绍如何利用飞桨图像分类套件**PaddleClas**在flowers102 数据集上，使用当前PaddleClas中包含的HRNet模型进行详细讲解。
+HRNet模型是经典的高分辨率分类模型，模型结构如下。
 
-![model](PPLCNet分类例程.assets/model.png)
+![image-20221103190029574](docs.assets/model.png)
 
-PP-LCNet模型更详细的原理介绍请参考[官网链接](https://github.com/PaddlePaddle/PaddleClas)。
+HRNet模型更详细的原理介绍请参考[官方论文](https://arxiv.org/abs/1904.04514)。
 
 ## 文章目录结构
 
@@ -50,7 +50,7 @@ PP-LCNet模型更详细的原理介绍请参考[官网链接](https://github.com
 
 根据系统和设备的cuda环境，选择对应的安装包，这里默认使用pip在linux设备上进行安装。
 
-![176497642-0abf3de1-86d5-43af-afe8-f97db46b7fd9](PPLCNet分类例程.assets/176497642-0abf3de1-86d5-43af-afe8-f97db46b7fd9.png)
+![176497642-0abf3de1-86d5-43af-afe8-f97db46b7fd9](docs.assets/176497642-0abf3de1-86d5-43af-afe8-f97db46b7fd9.png)
 
 在终端执行
 
@@ -77,7 +77,7 @@ paddle.utils.run_check()
 
 用户可以通过使用github或者gitee的方式进行下载，我们当前版本为PaddleClas的release v2.5版本。后续在使用时，需要对应版本进行下载。
 
-![image-20221102120803146](PPLCNet分类例程.assets/image-20221102120803146.png)
+![image-20221102120803146](docs.assets/image-20221102120803146.png)
 
 
 
@@ -133,45 +133,43 @@ sh tests/test.sh
 
 安装好精灵标注后，双击打开软件会出现精灵标注的交互界面，选择新建即可选择标注任务，随后展开标注。
 
-
-
-![image-20221102123008695](PPLCNet分类例程.assets/image-20221102123008695.png)
+![image-20221102123008695](docs.assets/image-20221102123008695.png)
 
 然后选择图像分类标注。
 
-![image-20221102123257761](PPLCNet分类例程.assets/image-20221102123257761.png)
+![image-20221102123257761](docs.assets/image-20221102123257761.png)
 
 然后在右侧表单中依次选择图片文件夹、该分类任务的所有分类情况，用逗号(英文符号)隔开，配置每一张图像可以分配的种类上限。一般任务只需设置每张图像唯一分类即可。
 
-![image-20221102123503156](PPLCNet分类例程.assets/image-20221102123503156.png)
+![image-20221102123503156](docs.assets/image-20221102123503156.png)
 
 点击创建后进入标注界面，在标注界面左侧可以选择上一张标注图像或下一张标注图像。
 
-![image-20221102123711316](PPLCNet分类例程.assets/image-20221102123711316.png)
+![image-20221102123711316](docs.assets/image-20221102123711316.png)
 
 同时还可以点击设置，修改当前项目的一些基本属性。
 
-![image-20221102123813945](PPLCNet分类例程.assets/image-20221102123813945.png)
+![image-20221102123813945](docs.assets/image-20221102123813945.png)
 
 然后，可以关闭设置界面，回到标注界面，在界面中间偏下有一个白色方框，点击后可选择当前图像的类别。
 
-![image-20221102124021581](PPLCNet分类例程.assets/image-20221102124021581.png)
+![image-20221102124021581](docs.assets/image-20221102124021581.png)
 
 选择好当前图像类别后，点击正下方的蓝色钩按钮进行保存(或Ctrl+S保存)，当前图像标注保存成功后会有提示。
 
-![image-20221102124129835](PPLCNet分类例程.assets/image-20221102124129835.png)
+![image-20221102124129835](docs.assets/image-20221102124129835.png)
 
 然后依次点击左侧的后一个(或键盘右方向键)即可往后继续进行图像分类数据的标注。
 
 最后，标注完成后，可以点击左侧的导出按钮进行数据标注的导出。选择输出方式为json、配置导出路径即可。
 
-![image-20221102130337149](PPLCNet分类例程.assets/image-20221102130337149.png)
+![image-20221102130337149](docs.assets/image-20221102130337149.png)
 
 导出后文件在指定目录下生成outputs标注文件目录，并在其中对之前导入的所有图像生成标注文件。(务必对所有导入的图像进行标注后再导出)
 
-![image-20221102124528486](PPLCNet分类例程.assets/image-20221102124528486.png)
+![image-20221102124528486](docs.assets/image-20221102124528486.png)
 
-![image-20221102130403835](PPLCNet分类例程.assets/image-20221102130403835.png)
+![image-20221102130403835](docs.assets/image-20221102130403835.png)
 
 ## 2.2 数据格式转化
 
@@ -264,16 +262,16 @@ class2/image1.jpg 1
 
 ### 3.1.1 训练前准备
 
-我们可以通过PaddleClas提供的脚本对模型进行训练，在本小节中我们使用PP-LCNet模型与flowers102数据集展示训练过程。 在训练之前，最重要的修改自己的数据情况，确保能够正常训练。
+我们可以通过PaddleClas提供的脚本对模型进行训练，在本小节中我们使用HRNet模型与flowers102数据集展示训练过程。 在训练之前，最重要的修改自己的数据情况，确保能够正常训练。
 
-在本项目中，我们使用PaddleClas/ppcls/configs/ImageNet/PPLCNet/PPLCNet_x1_0.yaml进行训练。
+在本项目中，我们使用PaddleClas/ppcls/configs/ImageNet/HRNet/HRNet_W18_C.yaml进行训练。
 
-我们需要修改PaddleClas/ppcls/configs/ImageNet/PPLCNet/PPLCNet_x1_0.yaml中数据集的路径、模型的分类数（class_num）、模型类别id与实际类别映射文件（flowers102_label_list.txt--包含数据集中实际分类名称的文件，文件名不固定）以及预测后处理输出类别（设置每张图像只输出1个类别），修改为如下内容。
+我们需要修改PaddleClas/ppcls/configs/ImageNet/HRNet/HRNet_W18_C.yaml中数据集的路径、模型的分类数（class_num）、模型类别id与实际类别映射文件（flowers102_label_list.txt--包含数据集中实际分类名称的文件，文件名不固定）以及预测后处理输出类别（设置每张图像只输出1个类别），修改为如下内容。
 
 ```yaml
 # model architecture
 Arch:
-  name: PPLCNet_x1_0
+  name: HRNet_W18_C
   class_num: 102
 
 # data loader for train and eval
@@ -299,7 +297,7 @@ DataLoader:
 
     sampler:
       name: DistributedBatchSampler
-      batch_size: 512
+      batch_size: 128
       drop_last: False
       shuffle: True
     loader:
@@ -368,7 +366,14 @@ unzip flowers102.zip
 cd ../
 ```
 
-- 以上脚本要保证工作目录已进入到PaddleClas目录
+- 以上脚本要保证工作目录已进入到PaddleClas目录(若没有进入，需要通过cd指令进入)
+
+```bash
+# 将cd后的参数改成实际目录的路径即可
+cd PaddleClas_path
+```
+
+
 
 ### 3.1.2 开始训练
 
@@ -380,7 +385,7 @@ export CUDA_VISIBLE_DEVICES=0 # 设置1张可用的卡
 # set CUDA_VISIBLE_DEVICES=0
 
 python tools/train.py \
-       -c ./ppcls/configs/ImageNet/PPLCNet/PPLCNet_x1_0.yaml \
+       -c ./ppcls/configs/ImageNet/HRNet/HRNet_W18_C.yaml \
        -o Arch.pretrained=True \
        -o Global.epochs=40 \
        -o Global.eval_interval=2 \
@@ -414,7 +419,7 @@ python tools/train.py \
 ```bash
 export CUDA_VISIBLE_DEVICES=0,1,2,3 # 设置4张可用的卡
 python -m paddle.distributed.launch tools/train.py \
-       -c ./ppcls/configs/ImageNet/PPLCNet/PPLCNet_x1_0.yaml \
+       -c ./ppcls/configs/ImageNet/HRNet/HRNet_W18_C.yaml \
        -o Arch.pretrained=True \
        -o Global.epochs=40 \
        -o Global.eval_interval=2 \
@@ -429,8 +434,8 @@ python -m paddle.distributed.launch tools/train.py \
 
 ```bash
 python tools/train.py \
-       -c ./ppcls/configs/ImageNet/PPLCNet/PPLCNet_x1_0.yaml \
-       -o Global.checkpoints=./outputs/PPLCNet_x1_0/epoch_14 \
+       -c ./ppcls/configs/ImageNet/HRNet/HRNet_W18_C.yaml \
+       -o Global.checkpoints=./outputs/HRNet_W18_C/epoch_14 \
        -o Global.epochs=40 \
        -o Global.eval_interval=2 \
        -o Global.save_interval=2 \
@@ -460,7 +465,7 @@ visualdl --logdir outputs/vdl
 ```
 
 在浏览器输入提示的网址，效果如下：
-![image-20221102212559298](PPLCNet分类例程.assets/image-20221102212559298.png)
+![image-20221103192426287](docs.assets/vdl.png)
 
 
 ## 3.2 模型验证参数说明
@@ -471,8 +476,8 @@ visualdl --logdir outputs/vdl
 
 ```bash
 python tools/eval.py \
-    -c ./ppcls/configs/ImageNet/PPLCNet/PPLCNet_x1_0.yaml \
-    -o Global.pretrained_model=./outputs/PPLCNet_x1_0/best_model
+    -c ./ppcls/configs/ImageNet/HRNet/HRNet_W18_C.yaml \
+    -o Global.pretrained_model=./outputs/HRNet_W18_C/best_model
 ```
 
 - 参数说明如下
@@ -486,8 +491,8 @@ python tools/eval.py \
 
 ```bash
 python tools/eval.py \
-    -c ./ppcls/configs/ImageNet/PPLCNet/PPLCNet_x1_0.yaml \
-    -o Global.pretrained_model=./outputs/PPLCNet_x1_0/best_model \
+    -c ./ppcls/configs/ImageNet/HRNet/HRNet_W18_C.yaml \
+    -o Global.pretrained_model=./outputs/HRNet_W18_C/best_model \
     -o DataLoader.Eval.loader.num_workers=6
 ```
 
@@ -502,9 +507,9 @@ python tools/eval.py \
 随着评估脚本的运行，最终打印的评估日志如下：
 
 ```bash
-[2022/11/02 21:37:04] ppcls INFO: [Eval][Epoch 0][Iter: 0/16]CELoss: 2.95150, loss: 2.95150, top1: 0.26562, top5: 0.57812, batch_cost: 3.28183s, reader_cost: 1.32202, ips: 19.50132 images/sec
-[2022/11/02 21:37:04] ppcls INFO: [Eval][Epoch 0][Iter: 10/16]CELoss: 2.70841, loss: 2.70841, top1: 0.35938, top5: 0.66193, batch_cost: 0.02359s, reader_cost: 0.00144, ips: 2713.03130 images/sec
-[2022/11/02 21:37:05] ppcls INFO: [Eval][Epoch 0][Avg]CELoss: 2.88778, loss: 2.88778, top1: 0.29314, top5: 0.58725
+[2022/11/03 19:32:26] ppcls INFO: [Eval][Epoch 0][Iter: 0/16]CELoss: 1.05227, loss: 1.05227, top1: 0.75000, top5: 0.92188, batch_cost: 3.20560s, reader_cost: 1.45519, ips: 19.96508 images/sec
+[2022/11/03 19:32:28] ppcls INFO: [Eval][Epoch 0][Iter: 10/16]CELoss: 0.40082, loss: 0.40082, top1: 0.89062, top5: 0.97159, batch_cost: 0.21201s, reader_cost: 0.00127, ips: 301.87772 images/sec
+[2022/11/03 19:32:29] ppcls INFO: [Eval][Epoch 0][Avg]CELoss: 0.54829, loss: 0.54829, top1: 0.87549, top5: 0.97255
 ```
 
 ## 3.3 模型预测
@@ -515,8 +520,8 @@ tools/infer.py脚本是专门用来可视化预测案例的，命令格式如下
 
 ```bash
 python tools/infer.py \
-    -c ./ppcls/configs/ImageNet/PPLCNet/PPLCNet_x1_0.yaml \
-    -o Global.pretrained_model=./outputs/PPLCNet_x1_0/best_model \
+    -c ./ppcls/configs/ImageNet/HRNet/HRNet_W18_C.yaml \
+    -o Global.pretrained_model=./outputs/HRNet_W18_C/best_model \
     -o Infer.infer_imgs=dataset/flowers102/jpg/image_00001.jpg
 ```
 
@@ -528,22 +533,22 @@ python tools/infer.py \
 
 ```bash
 python tools/infer.py \
-    -c ./ppcls/configs/ImageNet/PPLCNet/PPLCNet_x1_0.yaml \
-    -o Global.pretrained_model=./outputs/PPLCNet_x1_0/best_model \
+    -c ./ppcls/configs/ImageNet/HRNet/HRNet_W18_C.yaml \
+    -o Global.pretrained_model=./outputs/HRNet_W18_C/best_model \
     -o Infer.infer_imgs=dataset/flowers102/jpg/ \
     -o Infer.batch_size=16
 ```
 
 - 其中，batch_size表示每一次预测批量处理16张图像，并且输出结果中，会将每16个结果放在一个列表中输出：
 
-  ![image-20221102215052433](PPLCNet分类例程.assets/image-20221102215052433.png)
+  ![image-20221103193414237](docs.assets/batch_infer_log.png)
 
 ### 3.3.1 输出说明
 
 - 在执行预测时，仅需要原始图像。无论是单张图片预测还是目录预测，都会输出每个样本的预测结果如下：
 
 ```bash
-[{'class_ids': [9], 'scores': [0.38627], 'file_name': 'dataset/flowers102/jpg/image_00001.jpg', 'label_names': ['globe thistle']}]
+[{'class_ids': [76], 'scores': [0.99997], 'file_name': 'dataset/flowers102/jpg/image_00001.jpg', 'label_names': ['passion flower']}]
 ```
 
 其中:
@@ -556,23 +561,24 @@ python tools/infer.py \
 # 4 配置文件的说明
 
 正是因为有配置文件的存在，我们才可以使用更便捷的进行消融实验。在本章节中我们选择
-```PaddleClas/ppcls/configs/ImageNet/PPLCNet/PPLCNet_x1_0.yaml```文件来进行配置文件的详细解读
+```PaddleClas/ppcls/configs/ImageNet/HRNet/HRNet_W18_C.yaml```文件来进行配置文件的详细解读
 
 ## 4.1 整体配置文件格式综述
 
-我们将```PPLCNet_x1_0.yaml```进行拆分解释
+我们将```HRNet_W18_C.yaml```进行拆分解释
 
-* **PPLCNet** 表示模型的名称
-* **x1_0** 表示当前网络相对于标准网络大小的缩放比例
+* **HRNet**表示模型的名称
+* **W18**表示模型的最小分支通道数(基础通道数)——W18对应模型的高分辨率多分支结构中的最小通道数为18
+* **C**表示模型输出为分类的聚合模式——将输出的多分支特征进行聚合得到最终的分类特征
 
 **引入配置文件的说明**
 
-当前PaddleClas为了降低配置网络的难度，利用配置文件进行训练、评估等模型的加载工作。要实现一个模型的训练，往往就需要至少1个配置文件才可运行，如，我们现在选择的```PPLCNet_x1_0.yaml```。
+当前PaddleClas为了降低配置网络的难度，利用配置文件进行训练、评估等模型的加载工作。要实现一个模型的训练，往往就需要至少1个配置文件才可运行，如，我们现在选择的```HRNet_W18_C.yaml```。
 
 ## 4.2 数据路径与数据预处理说明
 
 这一小节主要是说明数据部分，当准备好数据，如何进行配置文件修改，以及该部分的配置文件有什么内容。
-如下是截取的是```PPLCNet_x1_0.yaml```配置。
+如下是截取的是```HRNet_W18_C.yaml```配置。
 
 ```yaml
 DataLoader: # 数据加载器配置部分
@@ -600,7 +606,7 @@ DataLoader: # 数据加载器配置部分
       drop_last: False # 不丢弃数据集末尾采样不足batch_size大的训练数据
       shuffle: True # 随机打乱训练数据顺序
     loader: # 数据加载其它参数配置
-      num_workers: 4 # 加载使用的线程数
+      num_workers: 8 # 加载使用的线程数
       use_shared_memory: True # 加载使用共享内存
 
   Eval: # 验证数据加载部分
@@ -634,16 +640,16 @@ DataLoader: # 数据加载器配置部分
 **note**
 
 * 关于如何正确来写image_root以及cls_label_path是非常关键的，可以根据上一章节训练的过程以及数据标注章节进行相对文件夹路径的推演。
-* ``class_num``配置需要在PPLCNet_x1_0.yaml中的以下位置配置:
+* ``class_num``配置需要在HRNet_W18_C.yaml中的以下位置配置:
 
 ```yaml
 # model architecture
 Arch:
-  name: PPLCNet_x1_0
+  name: HRNet_W18_C
   class_num: 102
 ```
 
-- 预测时对应的id与实际类别映射的文件需要配置好才能保证预测结果中的类别名称正确，其改动需要在PPLCNet_x1_0.yaml中的以下位置配置:
+- 预测时对应的id与实际类别映射的文件需要配置好才能保证预测结果中的类别名称正确，其改动需要在HRNet_W18_C.yaml中的以下位置配置:
 
 ```yaml
 Infer:
@@ -656,47 +662,46 @@ Infer:
     class_id_map_file: dataset/flowers102/flowers102_label_list.txt # 修改为当前数据集的类别映射文件即可，该文件格式即第二章中数据划分所示的labels.txt
 ```
 
-
-
 ## 4.3 模型说明
 
 当我们配置好数据后，下面在看关于模型的选择说明
 
 ``` yaml
 Arch:
-  name: PPLCNet_x1_0
+  name: HRNet_W18_C
   class_num: 102
   pretrained: True # yaml可能不包含，但是可以自行添加
 ```
 
   **note**
 
-* 我们模型的name是PPLCNet_x1_0，即表示选用PPLCNet_x1_0这个模型
+* 我们模型的name是HRNet_W18_C，即表示选用HRNet_W18_C这个模型
+  * 类似的，PaddleClas还包含: HRNet_W32_C、HRNet_W48_C、HRNet_W64_C等同类不同配置的模型网络，详细可查看[官网模型](https://github.com/PaddlePaddle/PaddleClas/tree/release/2.5/ppcls/configs/ImageNet/HRNet)
 * class_num 配置该模型总的预测类别数
 * pretrained 配置是否加载预训练模型辅助训练
-* PaddleClas对于不同的模型有不同的yaml配置文件，可以在ppcls/configs/ImageNet或ppcls/configs下查询
+* PaddleClas对于不同的模型有不同的yaml配置文件，可以在ppcls/configs/ImageNet或ppcls/configs下查询相应模型
 
 ## 4.4 优化器和损失函数说明
 
-当我们配置好数据以及选定模型后，可以再进行优化器以及损失函数的选择(在PPLCNet_x1_0.yaml)
+当我们配置好数据以及选定模型后，可以再进行优化器以及损失函数的选择(在HRNet_W18_C.yaml)
 
 ``` yaml
 Optimizer: # 优化器配置部分
   name: Momentum # 优化器类型 —— 动量优化器
   momentum: 0.9 # 动量大小
   lr: # 学习率配置
-    name: Cosine # 学习率策略类型 —— 余弦衰减策略
-    learning_rate: 0.8 # 基础学习率大小
-    warmup_epoch: 5 # 预热轮次
+    name: Piecewise # 学习率策略类型 —— 分段衰减策略
+    learning_rate: 0.1 # 基础学习率大小
+    decay_epochs: [30, 60, 90] # 分段轮次: 第30轮、第60轮、第90轮发生学习率变化
+    values: [0.1, 0.01, 0.001, 0.0001] # 分段学习率变化值: 第30轮前为0.1，第30轮及其后为0.01，第60轮及其后为0.001，第90轮及其后为0.0001
   regularizer: # 正则化配置
     name: 'L2' # 正则化类型 —— L2正则，另外还有L1正则
-    coeff: 0.00003 # 正则因子
+    coeff: 0.0001 # 正则因子
 
 Loss: # 损失函数配置部分
   Train: # 训练损失函数部分
     - CELoss: # 交叉熵损失
         weight: 1.0 # 权重大小为1.0
-        epsilon: 0.1 # 标签平滑因子大小为0.1
   Eval: # 验证损失函数部分
     - CELoss: # 交叉熵损失
         weight: 1.0 # 权重大小为1.0
@@ -704,7 +709,7 @@ Loss: # 损失函数配置部分
 
 **note**
 
-*  学习率策略类型支持有Piecewise, MultiStepDecay, Step等6种
+*  学习率策略类型支持有Momentum, MultiStepDecay, Step等6种
 *  优化器类型支持有AdamWDL, AdamW, RMSProp, SGD等6种
 
 ## 4.5 其他参数说明
@@ -718,7 +723,7 @@ Global: # 公共配置
   save_interval: 1 # 保存轮次间隔
   eval_during_train: True # 边训练边评估 —— 按照验证轮次间隔进行评估
   eval_interval: 1 # 验证轮次间隔
-  epochs: 360 # 训练总轮次
+  epochs: 120 # 训练总轮次
   print_batch_step: 10 # 日志输出间隔
   use_visualdl: False # 不适用visualdl进行日志记录
   # used for static mode and model export
