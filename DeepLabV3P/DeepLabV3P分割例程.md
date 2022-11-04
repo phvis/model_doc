@@ -1,8 +1,8 @@
 # 概述
-本文重点介绍如何利用飞桨图像分割套件**PaddleSeg**在视盘分割数据上，使用当前PaddleSeg主推的PP-LiteSeg模型进行详细讲解
-PP-LiteSeg模型是PaddleSeg团队自研的轻量级语义分割模型，模型结构如下。
-![算法模型原理](docs.assets/1037541bab6848d69e98a97479321e52.png)
-PP-LiteSeg模型更详细的原理介绍请参考[官网链接](https://github.com/PaddlePaddle/PaddleSeg)。
+本文重点介绍如何利用飞桨图像分割套件**PaddleSeg**在视盘分割数据上，使用当前PaddleSeg中的DeepLabV3P模型进行详细讲解
+DeepLabV3P模型是PaddleSeg中经典的高效语义分割模型，模型结构如下。
+![image-20221104114133443](docs.assets/image-20221104114133443.png)
+DeepLabV3P模型更详细的原理介绍请参考[官网论文](https://arxiv.org/abs/1802.02611)。
 
 ## 文章目录结构
 - 1 环境安装
@@ -55,7 +55,7 @@ pip install paddlepaddle-gpu==2.3.0.post110 -f https://www.paddlepaddle.org.cn/w
 
 ### 1.1.2 验证安装是否成功
 
-``` bash
+```bash
 # 安装完成后您可以使用 python进入python解释器，
 python
 # 继续输入
@@ -71,7 +71,7 @@ paddle.utils.run_check()
 用户可以通过使用github或者gitee的方式进行下载，我们当前版本为PaddleSeg的release v2.5版本。后续在使用时，需要对应版本进行下载。
 <img width="683" alt="image" src="docs.assets/176498590-f7e1cd84-4e08-4285-bffa-5200ea629de1.png">
 
-``` bash
+```bash
 # github下载
 git clone -b release/2.5 https://github.com/PaddlePaddle/PaddleSeg.git
 # gitee下载
@@ -81,12 +81,12 @@ git clone -b release/2.5 https://gitee.com/PaddlePaddle/PaddleSeg.git
 ### 1.2.2 安装依赖项目
 * 方式一：
 通过直接pip install 安装，可以最高效率的安装依赖
-``` bash
+```bash
 pip install paddleseg
 ```
 * 方式二：
 下载PaddleSeg代码后，进入PaddleSeg代码文件夹目录下面
-``` bash
+```bash
 cd PaddleSeg
 pip install -r requirements.txt
 ```
@@ -95,7 +95,7 @@ pip install -r requirements.txt
 在PaddleSeg目录下执行如下命令，会进行简单的单卡训练和单卡预测。
 
 查看执行输出的log，没有报错，则验证安装成功。
-``` bash
+```bash
 sh tests/run_check_install.sh
 ```
 
@@ -138,6 +138,7 @@ git clone https://github.com/wkentaro/labelme
 <div align="center">
     <p>图2 已标注图片的示意图</p>
  </div>
+
 
 
 
@@ -261,14 +262,27 @@ paddlex --split_dataset --format SEG --dataset_dir D:\MyDataset --val_value 0.2 
 ## 3.1模型训练参数说明
 
 ### 3.1.1 训练前准备
-我们可以通过PaddleSeg提供的脚本对模型进行训练，在本小节中我们使用`PP-LiteSeg`模型与`optic_disc`数据集展示训练过程。 在训练之前，最重要的修改自己的数据情况，确保能够正常训练。
+我们可以通过PaddleSeg提供的脚本对模型进行训练，在本小节中我们使用DeepLabV3P模型与`optic_disc`数据集展示训练过程。 在训练之前，最重要的修改自己的数据情况，确保能够正常训练。
 
-在本项目中，我们使用```configs/pp_liteseg_stdc1_cityscapes_1024x512_scale1.0_160k.yml```进行训练。
+在本项目中，我们使用```configs/deeplabv3p/deeplabv3p_resnet50_os8_voc12aug_512x512_40k.yml```进行训练。
 
 我们发现
-```pp_liteseg_stdc1_cityscapes_1024x512_scale1.0_160k.yml```，需要逐层依赖```pp_liteseg_stdc1_cityscapes_1024x512_scale0.5_160k.yml```和```_base_/cityscapes.yml```。
+```deeplabv3p_resnet50_os8_voc12aug_512x512_40k.yml```，需要逐层依赖```_base_/pascal_voc12aug.yml```和```_base_/pascal_voc12.ym```。
 
-在这里改动\_base\_/cityscapes.yml中文件的路径，修改为如下内容。
+在这里改动\_base\_/pascal_voc12aug.yml中训练数据的模式，修改为如下内容:
+
+```yaml
+_base_: './pascal_voc12.yml'
+
+train_dataset:
+    mode: train
+```
+
+**note**
+
+- 自定义数据集不支持mode为trainaug，因此需要改为普通的train模式
+
+再改动\_base\_/pascal_voc12.yml中文件的路径，修改为如下内容:
 ```yaml
 train_dataset:
   type: Dataset
@@ -281,7 +295,7 @@ train_dataset:
       max_scale_factor: 2.0
       scale_step_size: 0.25
     - type: RandomPaddingCrop
-      crop_size: [1024, 512]
+      crop_size: [512, 512]
     - type: RandomHorizontalFlip
     - type: RandomDistort
       brightness_range: 0.4
@@ -313,7 +327,7 @@ export CUDA_VISIBLE_DEVICES=0 # 设置1张可用的卡
 # set CUDA_VISIBLE_DEVICES=0
 
 python train.py \
-       --config configs/pp_liteseg/pp_liteseg_stdc1_cityscapes_1024x512_scale1.0_160k.yml \
+       --config configs/deeplabv3p/deeplabv3p_resnet50_os8_voc12aug_512x512_40k.yml \
        --do_eval \
        --use_vdl \
        --save_interval 500 \
@@ -343,7 +357,7 @@ python train.py \
 ```bash
 export CUDA_VISIBLE_DEVICES=0,1,2,3 # 设置4张可用的卡
 python -m paddle.distributed.launch train.py \
-       --config configs/pp_liteseg/pp_liteseg_stdc1_cityscapes_1024x512_scale1.0_160k.yml  \
+       --config configs/deeplabv3p/deeplabv3p_resnet50_os8_voc12aug_512x512_40k.yml  \
        --do_eval \
        --use_vdl \
        --save_interval 500 \
@@ -353,7 +367,7 @@ python -m paddle.distributed.launch train.py \
 ### 3.1.4 恢复训练：
 ```bash
 python train.py \
-       --config configs/pp_liteseg/pp_liteseg_stdc1_cityscapes_1024x512_scale1.0_160k.yml \
+       --config configs/deeplabv3p/deeplabv3p_resnet50_os8_voc12aug_512x512_40k.yml \
        --resume_model output/iter_500 \
        --do_eval \
        --use_vdl \
@@ -379,7 +393,7 @@ visualdl --logdir output/
 ```
 
 在浏览器输入提示的网址，效果如下：
-<img width="920" alt="image" src="docs.assets/176484426-0fc9165c-a892-4f33-ac85-cfa2b310e741.png">
+![image-20221104183629639](docs.assets/image-20221104183629639.png)
 
 
 ## 3.2 模型验证参数说明
@@ -389,7 +403,7 @@ visualdl --logdir output/
 
 ```bash
 python val.py \
-       --config configs/pp_liteseg/pp_liteseg_stdc1_cityscapes_1024x512_scale1.0_160k.yml \
+       --config configs/deeplabv3p/deeplabv3p_resnet50_os8_voc12aug_512x512_40k.yml \
        --model_path output/iter_1000/model.pdparams
 ```
 
@@ -397,7 +411,7 @@ python val.py \
 
 ```bash
 python val.py \
-       --config configs/pp_liteseg/pp_liteseg_stdc1_cityscapes_1024x512_scale1.0_160k.yml \
+       --config configs/deeplabv3p/deeplabv3p_resnet50_os8_voc12aug_512x512_40k.yml \
        --model_path output/iter_1000/model.pdparams \
        --aug_eval \
        --scales 0.75 1.0 1.25 \
@@ -408,7 +422,7 @@ python val.py \
 
 ```bash
 python val.py \
-       --config configs/pp_liteseg/pp_liteseg_stdc1_cityscapes_1024x512_scale1.0_160k.yml \
+       --config configs/deeplabv3p/deeplabv3p_resnet50_os8_voc12aug_512x512_40k.yml \
        --model_path output/iter_1000/model.pdparams \
        --is_slide \
        --crop_size 256 256 \
@@ -435,7 +449,7 @@ python val.py \
 在图像分割领域中，评估模型质量主要是通过三个指标进行判断，准确率（acc）、平均交并比（Mean Intersection over Union，简称mIoU）、Kappa系数。
 
 - 准确率：指类别预测正确的像素占总像素的比例，准确率越高模型质量越好。
-- 平均交并比：对每个类别数据集单独进行推理计算，计算出的预测区域和实际区域交集除以预测区域和实际区域的并集，然后将所有类别得到的结果取平均。在本例中，正常情况下模型在验证集上的mIoU指标值会达到0.80以上，显示信息示例如下所示，第4行的**mIoU=0.9196**即为mIoU。
+- 平均交并比：对每个类别数据集单独进行推理计算，计算出的预测区域和实际区域交集除以预测区域和实际区域的并集，然后将所有类别得到的结果取平均。在本例中，正常情况下模型在验证集上的mIoU指标值会达到0.80以上，显示信息示例如下所示，第4行的**mIoU=0.9125**即为mIoU。
 - Kappa系数：一个用于一致性检验的指标，可以用于衡量分类的效果。kappa系数的计算是基于混淆矩阵的，取值为-1到1之间，通常大于0。其公式如下所示，P0为分类器的准确率，Pe为随机分类器的准确率。Kappa系数越高模型质量越好。
 
 <img src="docs.assets/gif.latex" title="Kappa= \frac{P_0-P_e}{1-P_e}" />
@@ -444,15 +458,15 @@ python val.py \
 
 ```
 ...
-2022-11-03 20:16:27 [INFO]	Start evaluating (total_samples: 76, total_iters: 76)...
-76/76 [==============================] - 3s 45ms/step - batch_cost: 0.0452 - reader cost: 0.0058
-2022-11-03 20:16:30 [INFO]	[EVAL] #Images: 76 mIoU: 0.9196 Acc: 0.9969 Kappa: 0.9128 Dice: 0.9564
-2022-11-03 20:16:30 [INFO]	[EVAL] Class IoU: 
-[0.9969 0.8423]
-2022-11-03 20:16:30 [INFO]	[EVAL] Class Precision: 
-[0.9981 0.9307]
-2022-11-03 20:16:30 [INFO]	[EVAL] Class Recall: 
-[0.9987 0.8987]
+2022-11-04 18:40:34 [INFO]	Start evaluating (total_samples: 76, total_iters: 76)...
+76/76 [==============================] - 5s 63ms/step - batch_cost: 0.0627 - reader cost: 0.0025
+2022-11-04 18:40:39 [INFO]	[EVAL] #Images: 76 mIoU: 0.9125 Acc: 0.9968 Kappa: 0.9044 Dice: 0.9522
+2022-11-04 18:40:39 [INFO]	[EVAL] Class IoU: 
+[0.9967 0.8282]
+2022-11-04 18:40:39 [INFO]	[EVAL] Class Precision: 
+[0.9971 0.9746]
+2022-11-04 18:40:39 [INFO]	[EVAL] Class Recall: 
+[0.9996 0.8465]
 ```
 
 ## 3.3 模型预测
@@ -463,7 +477,7 @@ predict.py脚本是专门用来可视化预测案例的，命令格式如下所�
 
 ```bash
 python predict.py \
-       --config configs/pp_liteseg/pp_liteseg_stdc1_cityscapes_1024x512_scale1.0_160k.yml \
+       --config configs/deeplabv3p/deeplabv3p_resnet50_os8_voc12aug_512x512_40k.yml \
        --model_path output/iter_1000/model.pdparams \
        --image_path data/optic_disc_seg/JPEGImages/H0003.jpg \
        --save_dir output/result
@@ -531,7 +545,7 @@ python predict.py \
 在该分割结果中，前景以红色标明，背景以黑色标明。如果你想要使用其他颜色，可以参考如下命令：
 ```bash
 python predict.py \
-       --config configs/pp_liteseg/pp_liteseg_stdc1_cityscapes_1024x512_scale1.0_160k.yml \
+       --config configs/deeplabv3p/deeplabv3p_resnet50_os8_voc12aug_512x512_40k.yml \
        --model_path output/iter_1000/model.pdparams \
        --image_path data/optic_disc_seg/JPEGImages/H0003.jpg \
        --save_dir output/result \
@@ -548,7 +562,7 @@ python predict.py \
 - 如果使用自定义color map，输入的`color值`的个数应该等于`3 * 像素种类`（取决于你所使用的数据集）。比如，你的数据集有 3 种像素，则可考虑执行:
 ```bash
 python predict.py \
-       --config configs/pp_liteseg/pp_liteseg_stdc1_cityscapes_1024x512_scale1.0_160k.yml \
+       --config configs/deeplabv3p/deeplabv3p_resnet50_os8_voc12aug_512x512_40k.yml \
        --model_path output/iter_1000/model.pdparams \
        --image_path data/optic_disc_seg/JPEGImages/H0003.jpg \
        --save_dir output/result \
@@ -560,57 +574,45 @@ python predict.py \
 # 4 配置文件的说明
 
 正是因为有配置文件的存在，我们才可以使用更便捷的进行消融实验。在本章节中我们选择
-```configs/pp_liteseg_stdc1_cityscapes_1024x512_scale1.0_160k.yml```文件来进行配置文件的详细解读
+```configs/deeplabv3p/deeplabv3p_resnet50_os8_voc12aug_512x512_40k.yml```文件来进行配置文件的详细解读
 
 ## 4.1 整体配置文件格式综述
-我们将```pp_liteseg_stdc1_cityscapes_1024x512_scale1.0_160k.yml```进行拆分解释
-* **pp_liteseg** 表示模型的名称
-* **stdc1** 表示主干网络为叫stdc1的网络
-* **cityscapes** 表示该模型是基于cityscapes进行了训练，并提供了人该数据的预训练模型
-* **1024x512** 表示训练入网尺寸是1024X512， 假如原图是2048X2048，则会resize到1024X512进行训练
-* **scale1.0** 表示验证的时候时候输入网络的尺寸和入网尺寸一致。如果scale0.5则表示实际入网的图片是512x256
-* **160k** 表示训练160k个iters
+我们将```deeplabv3p_resnet50_os8_voc12aug_512x512_40k.yml```进行拆分解释
+* **deeplabv3p** 表示模型的名称
+* **resnet50**表示骨干网络名称
+* **os8**表示模型输出步长为8——即输入图片与输出特征图的尺度之比
+* **voc12aug**表示训练时加载训练数据采用pascal_voc12aug.yml中的trainaug模式——自定义数据集格式加载数据不支持该模式
+* **cityscapes** 表示该模型是基于cityscapes进行了训练，并提供了该数据的预训练模型
+* **512x512** 表示训练入网尺寸是512X512， 假如原图是2048X2048，则会resize到512X512进行训练
+* **40k** 表示训练40k个iters
 
 **配置文件示例说明**
 
-当前PaddleSeg为了降低配置冗余，将配置文件打散。要实现一个模型的训练，往往需要多个配置文件才可运行，如，我们现在选择的```pp_liteseg_stdc1_cityscapes_1024x512_scale1.0_160k.yml```，需要逐层依赖```pp_liteseg_stdc1_cityscapes_1024x512_scale0.5_160k.yml```和```_base_/cityscapes.yml```。
+当前PaddleSeg为了降低配置冗余，将配置文件打散。要实现一个模型的训练，往往需要多个配置文件才可运行，如，我们现在选择的```deeplabv3p_resnet50_os8_voc12aug_512x512_40k.yml```，需要逐层依赖```../_base_/pascal_voc12aug.yml```和```../_base_/pascal_voc12.yml```。
 
 如果遇到相同的配置项，则直接使用的文件的地位最高，依赖文件越往后地位递减。
-如下图中，配置文件1的优先级高于配置文件2，高于配置文件3 如，配置文件1和配置文件3都具有train_datasets这一项，但是最终文件读取会以配置文件1填写的内容为主。
-<img width="1039" alt="image" src="https://user-images.githubusercontent.com/48433081/176415275-f3023f43-7de2-49cb-859c-10173519638c.png">
+如下图中，配置文件1的优先级高于配置文件2，高于配置文件3 如，配置文件2和配置文件3都具有train_datasets这一项，但是最终文件读取会以配置文件2中填写的部分内容为主(即mode)。
+![image-20221104185136102](docs.assets/image-20221104185136102.png)
 
 ## 4.2 数据路径与数据预处理说明
 这一小节主要是说明数据部分，当准备好数据，如何进行配置文件修改，以及该部分的配置文件有什么内容。
-如下是截取的是```pp_liteseg_stdc1_cityscapes_1024x512_scale1.0_160k.yml```配置。
+如下是截取的是```deeplabv3p_resnet50_os8_voc12aug_512x512_40k.yml```配置。
 
-``` yaml
-train_dataset:
-  type: Cityscapes
-  dataset_root: data/cityscapes
-  transforms:
-    - type: ResizeStepScaling
-      min_scale_factor: 0.5
-      max_scale_factor: 2.0
-      scale_step_size: 0.25
-    - type: RandomPaddingCrop
-      crop_size: [1024, 512]
-    - type: RandomHorizontalFlip
-    - type: RandomDistort
-      brightness_range: 0.4
-      contrast_range: 0.4
-      saturation_range: 0.4
-    - type: Normalize
-  mode: train
-
-val_dataset:
-  type: Cityscapes
-  dataset_root: data/cityscapes
-  transforms:
-    - type: Normalize
-  mode: val
+```yaml
+_base_: '../_base_/pascal_voc12aug.yml'
 ```
-该配置是基于Cityscapes构建的，那我们自己创建好数据集，应该如何进行修改呢？
-如下给出一个自定义数据集
+这说明该模型数据加载依赖```pascal_voc12aug.yml```文件。
+
+```yaml
+_base_: './pascal_voc12.yml'
+
+train_dataset:
+  mode: trainaug
+```
+
+而```pascal_voc12aug.yml```依赖于```pascal_voc12.yml```。因此该模型数据集的配置是基于pascal_voc12构建的，那我们自己创建好数据集，应该如何进行修改呢？
+如下给出一个在```pascal_voc12.yml```中的自定义数据集
+
 ```yaml
 train_dataset:# 训练数据集
   type: Dataset #数据集类型，自定义数据集统一type均为Dataset
@@ -624,7 +626,7 @@ train_dataset:# 训练数据集
       max_scale_factor: 2.0
       scale_step_size: 0.25
     - type: RandomPaddingCrop ##从原始图像和标注图像中随机裁剪1024x512大小
-      crop_size: [1024, 512]
+      crop_size: [512, 512]
     - type: RandomHorizontalFlip #采用水平反转的方式进行数据增强
     - type: RandomDistort #亮度、对比度、饱和度随机变动
       brightness_range: 0.4
@@ -646,44 +648,59 @@ val_dataset:# 验证数据集
 **note**
 
 * 关于如何正确来写```dataset_root``` 是非常关键的，可以根据上一章节训练的过程推演相对文件夹路径。
-
 * ``num_classes``切勿忘记背景类别。
-
 * PaddleSeg提供了多种数据增强的方式，如Blur、Rotation、Aspect等，可以通过访问[损失函数说明](https://github.com/PaddlePaddle/PaddleSeg/blob/release/2.5/docs/module/data/data_cn.md)来进行后续的修改。
+* 由于```pascal_voc12aug.yml```中设置训练数据集使用特定的mode，因此在使用自定义数据集时要指定回通用的train模式。
+
+```yaml
+_base_: './pascal_voc12.yml'
+
+train_dataset:
+  mode: train
+```
+
+
 
 ## 4.3 模型与主干网络说明
-当我们配置好数据后，下面在看关于模型和主干网络的选择(位于`pp_liteseg_stdc1_cityscapes_1024x512_scale0.5_160k.yml`中)
+当我们配置好数据后，下面在看关于模型和主干网络的选择(位于`deeplabv3p_resnet50_os8_voc12aug_512x512_40k.yml`中)
 ```yaml
 model:
-  type: PPLiteSeg
+  type: DeepLabV3P
   backbone:
-    type: STDC1
-    pretrained: https://bj.bcebos.com/paddleseg/dygraph/PP_STDCNet1.tar.gz
-  arm_out_chs: [32, 64, 128]
-  seg_head_inter_chs: [32, 64, 64]
+    type: ResNet50_vd
+    output_stride: 8
+    multi_grid: [1, 2, 4]
+    pretrained: https://bj.bcebos.com/paddleseg/dygraph/resnet50_vd_ssld_v2.tar.gz
+  backbone_indices: [0, 3]
+  aspp_ratios: [1, 12, 24, 36]
+  aspp_out_channels: 256
+  align_corners: False
+  pretrained: null
 ```
   **note**
-* 我们模型的type是PPLiteSeg，
-* 主干网络是 STDC1，在这里我们可以自由更换，比如换成ResNet50_vd,不同的主干网络需要选择不同的参数。
-* 预训练模型 pretrained，我们这里可以加载其它的预先训练好的模型，如果我们不加载预先训练模型，可以在后面补充一个``null``
-* ``arm_out_chs``和``seg_head_inter_chs``此部分内容是根据模型特点来替换，不同的模型会有不同的参数。
+* 我们模型的type是DeepLabV3P
+* backbone表示主干网络的配置
+* 主干网络是 ResNet50_vd，在这里我们可以自由更换，比如换成ResNet101_vd，不同的主干网络需要选择不同的参数
+* output_stride表示模型输出步长为8——即输入图片与输出特征图的尺度之比，另外一般还可以设置为16
+* multi_grid表示模型的ResNet50_vd中最后一个stage的3个卷积层都采用空洞卷积，且相应的扩张率依次为(output_stride=8时): rate: 4*[1, 2, 4]——若output_stride=16，则rate: 2\*[1, 2, 4]
+* backbone下的pretrained表示主干网络的预训练模型，可以加载其它的预先训练好的模型，如果我们不加载预先训练模型，可以在后面补充为null
+* backbone_indices表示分割模型利用主干网络中那些特定stage的输出作为分割头的输入，这里选用ResNet50_vd的第0个stage与第3个stage的输出作为分割头输入
+* aspp_ratios表示模型ASSP结构中各分支空洞卷积的扩张率大小，其中第一个分支扩张率为1即为普通卷积，其它分支扩张率大于1则相应配置为对应扩展率的空洞卷积
+* aspp_out_channels表示ASPP结构输出的特征图通道数
+* align_corners表示模型中上采样是否角点对齐
+* model下的pretrained表示整个模型的预训练模型，可以加载其它的预先训练好的模型，如果我们不加载预先训练模型，可以在后面补充为null
 ## 4.4 优化器和损失函数说明
-当我们配置好数据与模型后，下面再看关于优化器和损失函数的选择
+当我们配置好数据与模型后，下面再看关于优化器和损失函数的选择(位于```deeplabv3p_resnet50_os8_voc12aug_512x512_40k.yml```中)
 ```yaml
 loss:
   types: # 损失函数的类型
-    - type: OhemCrossEntropyLoss
-      min_kept: 130000   # batch_size * 1024 * 512 // 16
-    - type: OhemCrossEntropyLoss
-      min_kept: 130000
-    - type: OhemCrossEntropyLoss
-      min_kept: 130000
-  coef: [1, 1, 1]
-  # PP-LiteSeg有一个主loss和两个辅助loss，coef表示权重： total_loss = coef_1 * loss_1 + .... + coef_n * loss_n
+    - type: CrossEntropyLoss
+  coef: [1]
+  # PP-LiteSeg有1个主loss，coef表示权重： total_loss = coef_1 * loss_1 + .... + coef_n * loss_n
 ```
   **note**
 * PaddleSeg提供了多种损失函数的选择
-BCELoss、BootstrappedCrossEntropyLoss、CrossEntropyLoss_cn、RelaxBoundaryLoss_cn等13种损失函数，可以通过访问[损失函数说明](https://github.com/PaddlePaddle/PaddleSeg/blob/release/2.5/README_CN.md)来进行后续的修改。
+BCELoss、BootstrappedCrossEntropyLoss、CrossEntropyLoss、RelaxBoundaryLoss等13种损失函数，可以通过访问[损失函数说明](https://github.com/PaddlePaddle/PaddleSeg/blob/release/2.5/README_CN.md)来进行后续的修改。
 
 ```yaml
 optimizer: #设定优化器的类型 目前只支持'sgd'和'adam'
@@ -691,12 +708,11 @@ optimizer: #设定优化器的类型 目前只支持'sgd'和'adam'
   momentum: 0.9 #动量
   weight_decay: 4.0e-5 #权值衰减，使用的目的是防止过拟合
 
-
 lr_scheduler: # 学习率的相关设置
   type: PolynomialDecay # 一种学习率类型。共支持12种策略
   learning_rate: 0.01 #目前paddleseg原始配置文件给出的都是四卡学习率。如果单卡训练，学习率初始值需要设置为原来的1/4.
-  power: 0.9
   end_lr: 0
+  power: 0.9
 ```
 **note**
 *  学习率策略类型支持有PolynomialDecay, PiecewiseDecay等12种，相关可以参考
@@ -705,11 +721,11 @@ lr_scheduler: # 学习率的相关设置
 ## 4.5 其他参数说明
 ```yaml
 batch_size: 4  #批次大小，批次过大会导致显存爆炸
-iters: 160000 #训练的步数
+iters: 40000 #训练的步数
 ```
 
 ```yaml
-test_config: # 该项为进行训练时候开启验证
+test_config: # 该项为进行训练时候开启验证(若模型所属的yml中没有该项，可自行添加到yml文件末尾即可)
   aug_eval: True 
   scales: 1 #表示验证的时候时候输入网络的尺寸和入网尺寸一致。如果scale0.5则表示实际入网的图片是512x256
 ```

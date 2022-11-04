@@ -49,7 +49,7 @@ BiSeNetV2模型更详细的原理介绍请参考[官网论文](https://arxiv.org
 <img width="821" alt="image" src="docs.assets/176497642-0abf3de1-86d5-43af-afe8-f97db46b7fd9.png">
 在终端执行
 
-```
+```bash
 pip install paddlepaddle-gpu==2.3.0.post110 -f https://www.paddlepaddle.org.cn/whl/linux/mkl/avx/stable.html
 ```
 
@@ -127,7 +127,7 @@ LabelMe支持在Windows/macOS/Linux三个系统上使用，且三个系统下的
 
 获取`LabelMe`的源码：
 
-```
+```bash
 git clone https://github.com/wkentaro/labelme
 ```
 
@@ -135,7 +135,7 @@ git clone https://github.com/wkentaro/labelme
 
 <img width="606" alt="image" src="docs.assets/176489848-12e8f9ab-344f-4234-84a3-482f12275911.png">
 
-<div align="left">
+<div align="center">
     <p>图2 已标注图片的示意图</p>
  </div>
 
@@ -202,7 +202,7 @@ pip install paddlex
 2. 将所有的标注json文件放在同一个目录下，如`annotations`目录  
 3. 使用如下命令进行转换:
 
-```commandline
+```bash
 paddlex --data_conversion --source labelme --to SEG --pics ./pics --annotations ./annotations --save_dir ./converted_dataset_dir
 ```
 
@@ -216,7 +216,7 @@ paddlex --data_conversion --source labelme --to SEG --pics ./pics --annotations 
 ## 2.3 数据划分
 在这里，我们依旧使用paddlex进行数据划分
 使用paddlex命令即可将数据集随机划分成70%训练集，20%验证集和10%测试集:
-```commandline
+```bash
 paddlex --split_dataset --format SEG --dataset_dir D:\MyDataset --val_value 0.2 --test_value 0.1
 ```
 执行上面命令行，会在`D:\MyDataset`下生成`train_list.txt`, `val_list.txt`, `test_list.txt`，分别存储训练样本信息，验证样本信息，测试样本信息
@@ -269,7 +269,7 @@ paddlex --split_dataset --format SEG --dataset_dir D:\MyDataset --val_value 0.2 
 ```bisenet_cityscapes_1024x1024_160k.yml```，需要逐层依赖```_base_/cityscapes_1024x1024```和```_base_/cityscapes.yml```。
 
 在这里改动\_base\_/cityscapes.yml中文件的路径，修改为如下内容。
-```
+```yaml
 train_dataset:
   type: Dataset
   dataset_root: data/optic_disc_seg
@@ -307,7 +307,7 @@ val_dataset:
 
 ### 3.1.2 开始训练
 请确保已经完成了PaddleSeg的安装工作，并且当前位于PaddleSeg目录下，执行以下脚本：
-```shell
+```bash
 export CUDA_VISIBLE_DEVICES=0 # 设置1张可用的卡
 # windows下请执行以下命令
 # set CUDA_VISIBLE_DEVICES=0
@@ -340,7 +340,7 @@ python train.py \
 ### 3.1.3 多卡训练
 如果想要使用多卡训练的话，需要将环境变量CUDA_VISIBLE_DEVICES指定为多卡（不指定时默认使用所有的gpu)，并使用paddle.distributed.launch启动训练脚本（windows下由于不支持nccl，无法使用多卡训练）:
 
-```shell
+```bash
 export CUDA_VISIBLE_DEVICES=0,1,2,3 # 设置4张可用的卡
 python -m paddle.distributed.launch train.py \
        --config configs/bisenet/bisenet_cityscapes_1024x1024_160k.yml  \
@@ -351,7 +351,7 @@ python -m paddle.distributed.launch train.py \
 ```
 
 ### 3.1.4 恢复训练：
-```shell
+```bash
 python train.py \
        --config configs/bisenet/bisenet_cityscapes_1024x1024_160k.yml \
        --resume_model output/iter_500 \
@@ -373,7 +373,7 @@ PaddleSeg会将训练过程中的数据写入VisualDL文件，并实时的查看
 6. mean pixel Accuracy变化趋势（当打开了`do_eval`开关后生效）
 
 使用如下命令启动VisualDL查看日志
-```shell
+```bash
 # 下述命令会在127.0.0.1上启动一个服务，支持通过前端web页面查看，可以通过--host这个参数指定实际ip地址
 visualdl --logdir output/
 ```
@@ -387,7 +387,7 @@ visualdl --logdir output/
 ### 3.2.1 评估操作
 训练完成后，用户可以使用评估脚本val.py来评估模型效果。假设训练过程中迭代次数（iters）为1000，保存模型的间隔为500，即每迭代1000次数据集保存2次训练模型。因此一共会产生2个定期保存的模型，加上保存的最佳模型`best_model`，一共有3个模型，可以通过`model_path`指定期望评估的模型文件。
 
-```
+```bash
 python val.py \
        --config configs/bisenet/bisenet_cityscapes_1024x1024_160k.yml \
        --model_path output/iter_1000/model.pdparams
@@ -395,7 +395,7 @@ python val.py \
 
 如果想进行多尺度翻转评估，可通过传入`--aug_eval`进行开启，然后通过`--scales`传入尺度信息， `--flip_horizontal`开启水平翻转， `flip_vertical`开启垂直翻转。使用示例如下：
 
-```
+```bash
 python val.py \
        --config configs/bisenet/bisenet_cityscapes_1024x1024_160k.yml \
        --model_path output/iter_1000/model.pdparams \
@@ -406,7 +406,7 @@ python val.py \
 
 如果想进行滑窗评估，可通过传入`--is_slide`进行开启， 通过`--crop_size`传入窗口大小， `--stride`传入步长。使用示例如下：
 
-```
+```bash
 python val.py \
        --config configs/bisenet/bisenet_cityscapes_1024x1024_160k.yml \
        --model_path output/iter_1000/model.pdparams \
@@ -461,7 +461,7 @@ python val.py \
 
 predict.py脚本是专门用来可视化预测案例的，命令格式如下所示：
 
-```
+```bash
 python predict.py \
        --config configs/bisenet/bisenet_cityscapes_1024x1024_160k.yml \
        --model_path output/iter_1000/model.pdparams \
@@ -529,7 +529,7 @@ python predict.py \
 ​                                                                                            伪彩色标注图/叠加图
 
 在该分割结果中，前景以红色标明，背景以黑色标明。如果你想要使用其他颜色，可以参考如下命令：
-```python
+```bash
 python predict.py \
        --config configs/bisenet/bisenet_cityscapes_1024x1024_160k.yml \
        --model_path output/iter_1000/model.pdparams \
@@ -546,7 +546,7 @@ python predict.py \
 - 参数解析
 - 可以看到我们在最后添加了 `--custom_color 0 0 0 255 255 255`，这是什么意思呢？在RGB图像中，每个像素最终呈现出来的颜色是由RGB三个通道的分量共同决定的，因此该命令行参数后每三位代表一种像素的颜色，位置与`label.txt`中各类像素点一一对应。
 - 如果使用自定义color map，输入的`color值`的个数应该等于`3 * 像素种类`（取决于你所使用的数据集）。比如，你的数据集有 3 种像素，则可考虑执行:
-```python
+```bash
 python predict.py \
        --config configs/bisenet/bisenet_cityscapes_1024x1024_160k.yml \
        --model_path output/iter_1000/model.pdparams \
@@ -581,12 +581,12 @@ python predict.py \
 这一小节主要是说明数据部分，当准备好数据，如何进行配置文件修改，以及该部分的配置文件有什么内容。
 如下是截取的是```bisenet_cityscapes_1024x1024_160k.yml```配置。
 
-``` bash
+``` yaml
 _base_: '../_base_/cityscapes_1024x1024.yml'
 ```
 这说明该模型数据加载依赖```cityscapes_1024x1024.yml```文件。
 
-```
+```yaml
 _base_: './cityscapes.yml'
 
 train_dataset:
@@ -612,7 +612,7 @@ val_dataset:
 而```cityscapes_1024x1024.yml```依赖于```cityscapes.yml```。因此该模型数据集的配置是基于Cityscapes构建的，那我们自己创建好数据集，应该如何进行修改呢？
 如下给出一个在```cityscapes.yml```中的自定义数据集
 
-``` bash
+```yaml
 train_dataset:# 训练数据集
   type: Dataset #数据集类型，自定义数据集统一type均为Dataset
   dataset_root: data/optic_disc_seg #数据集路径
@@ -654,7 +654,7 @@ val_dataset:# 验证数据集
 
 ## 4.3 模型与主干网络说明
 当我们配置好数据后，下面在看关于模型和主干网络的选择(位于`bisenet_cityscapes_1024x1024_160k.yml`中)
-``` bash
+```yaml
 model:
   type: BiSeNetV2
   num_classes: 2
@@ -664,7 +664,7 @@ model:
 * num_classes表示模型的预测类别数，需要改为实际数据集中分割的类别数
 ## 4.4 优化器和损失函数说明
 当我们配置好数据与模型后，下面再看关于优化器和损失函数的选择(位于`bisenet_cityscapes_1024x1024_160k.yml`中)
-``` bash
+```yaml
 loss:
   types: # 损失函数的类型
     - type: CrossEntropyLoss
@@ -679,7 +679,7 @@ loss:
 * PaddleSeg提供了多种损失函数的选择
 BCELoss、BootstrappedCrossEntropyLoss、CrossEntropyLoss、RelaxBoundaryLoss等13种损失函数，可以通过访问[损失函数说明](https://github.com/PaddlePaddle/PaddleSeg/blob/release/2.5/README_CN.md)来进行后续的修改。
 
-``` bash
+```yaml
 optimizer: #设定优化器的类型 目前只支持'sgd'和'adam'
   type: sgd #采用SGD（Stochastic Gradient Descent）随机梯度下降方法为优化器
   weight_decay: 0.0005 #权值衰减，使用的目的是防止过拟合
@@ -691,16 +691,16 @@ lr_scheduler: # 学习率的相关设置
   power: 0.9
 ```
 **note**
-*  学习率策略类型支持有PolynomialDecay', 'PiecewiseDecay'等12种，相关可以参考
+*  学习率策略类型支持有PolynomialDecay, PiecewiseDecay等12种，相关可以参考
 [学习率策略](https://www.paddlepaddle.org.cn/documentation/docs/zh/api/paddle/optimizer/lr/LRScheduler_cn.html)来进行后续的修改。
 
 ## 4.5 其他参数说明
-``` bash
+```yaml
 batch_size: 4  #批次大小，批次过大会导致显存爆炸
 iters: 160000 #训练的步数
 ```
 
-``` bash
+```yaml
 test_config: # 该项为进行训练时候开启验证(若模型所属的yml中没有该项，可自行添加到yml文件末尾即可)
   aug_eval: True 
   scales: 1 #表示验证的时候时候输入网络的尺寸和入网尺寸一致。如果scale0.5则表示实际入网的图片是512x256
