@@ -1,8 +1,8 @@
 # 概述
-本文重点介绍如何利用飞桨图像分割套件**PaddleSeg**在视盘分割数据上，使用当前PaddleSeg主推的PP-LiteSeg模型进行详细讲解
-PP-LiteSeg模型是PaddleSeg团队自研的轻量级语义分割模型，模型结构如下。
-![算法模型原理](docs.assets/1037541bab6848d69e98a97479321e52.png)
-PP-LiteSeg模型更详细的原理介绍请参考[官网链接](https://github.com/PaddlePaddle/PaddleSeg)。
+本文重点介绍如何利用飞桨图像分割套件**PaddleSeg**在视盘分割数据上，使用当前PaddleSeg中的BiSeNetV2模型进行详细讲解
+BiSeNetV2模型是PaddleSeg中经典的轻量级语义分割模型，模型结构如下。
+![image-20221104110005312](docs.assets/image-20221104110005312.png)
+BiSeNetV2模型更详细的原理介绍请参考[官网论文](https://arxiv.org/abs/2004.02147)。
 
 ## 文章目录结构
 - 1 环境安装
@@ -261,12 +261,12 @@ paddlex --split_dataset --format SEG --dataset_dir D:\MyDataset --val_value 0.2 
 ## 3.1模型训练参数说明
 
 ### 3.1.1 训练前准备
-我们可以通过PaddleSeg提供的脚本对模型进行训练，在本小节中我们使用`PP-LiteSeg`模型与`optic_disc`数据集展示训练过程。 在训练之前，最重要的修改自己的数据情况，确保能够正常训练。
+我们可以通过PaddleSeg提供的脚本对模型进行训练，在本小节中我们使用BiSeNetV2模型与`optic_disc`数据集展示训练过程。 在训练之前，最重要的修改自己的数据情况，确保能够正常训练。
 
-在本项目中，我们使用```configs/pp_liteseg_stdc1_cityscapes_1024x512_scale1.0_160k.yml```进行训练。
+在本项目中，我们使用```configs/bisenet/bisenet_cityscapes_1024x1024_160k.yml```进行训练。
 
 我们发现
-```pp_liteseg_stdc1_cityscapes_1024x512_scale1.0_160k.yml```，需要逐层依赖```pp_liteseg_stdc1_cityscapes_1024x512_scale0.5_160k.yml```和```_base_/cityscapes.yml```。
+```bisenet_cityscapes_1024x1024_160k.yml```，需要逐层依赖```_base_/cityscapes_1024x1024```和```_base_/cityscapes.yml```。
 
 在这里改动\_base\_/cityscapes.yml中文件的路径，修改为如下内容。
 ```
@@ -281,7 +281,7 @@ train_dataset:
       max_scale_factor: 2.0
       scale_step_size: 0.25
     - type: RandomPaddingCrop
-      crop_size: [1024, 512]
+      crop_size: [1024, 1024]
     - type: RandomHorizontalFlip
     - type: RandomDistort
       brightness_range: 0.4
@@ -313,7 +313,7 @@ export CUDA_VISIBLE_DEVICES=0 # 设置1张可用的卡
 # set CUDA_VISIBLE_DEVICES=0
 
 python train.py \
-       --config configs/pp_liteseg/pp_liteseg_stdc1_cityscapes_1024x512_scale1.0_160k.yml \
+       --config configs/bisenet/bisenet_cityscapes_1024x1024_160k.yml \
        --do_eval \
        --use_vdl \
        --save_interval 500 \
@@ -343,7 +343,7 @@ python train.py \
 ```shell
 export CUDA_VISIBLE_DEVICES=0,1,2,3 # 设置4张可用的卡
 python -m paddle.distributed.launch train.py \
-       --config configs/pp_liteseg/pp_liteseg_stdc1_cityscapes_1024x512_scale1.0_160k.yml  \
+       --config configs/bisenet/bisenet_cityscapes_1024x1024_160k.yml  \
        --do_eval \
        --use_vdl \
        --save_interval 500 \
@@ -353,7 +353,7 @@ python -m paddle.distributed.launch train.py \
 ### 3.1.4 恢复训练：
 ```shell
 python train.py \
-       --config configs/pp_liteseg/pp_liteseg_stdc1_cityscapes_1024x512_scale1.0_160k.yml \
+       --config configs/bisenet/bisenet_cityscapes_1024x1024_160k.yml \
        --resume_model output/iter_500 \
        --do_eval \
        --use_vdl \
@@ -379,7 +379,7 @@ visualdl --logdir output/
 ```
 
 在浏览器输入提示的网址，效果如下：
-<img width="920" alt="image" src="docs.assets/176484426-0fc9165c-a892-4f33-ac85-cfa2b310e741.png">
+![image-20221104181326424](docs.assets/image-20221104181326424.png)
 
 
 ## 3.2 模型验证参数说明
@@ -389,7 +389,7 @@ visualdl --logdir output/
 
 ```
 python val.py \
-       --config configs/pp_liteseg/pp_liteseg_stdc1_cityscapes_1024x512_scale1.0_160k.yml \
+       --config configs/bisenet/bisenet_cityscapes_1024x1024_160k.yml \
        --model_path output/iter_1000/model.pdparams
 ```
 
@@ -397,7 +397,7 @@ python val.py \
 
 ```
 python val.py \
-       --config configs/pp_liteseg/pp_liteseg_stdc1_cityscapes_1024x512_scale1.0_160k.yml \
+       --config configs/bisenet/bisenet_cityscapes_1024x1024_160k.yml \
        --model_path output/iter_1000/model.pdparams \
        --aug_eval \
        --scales 0.75 1.0 1.25 \
@@ -408,7 +408,7 @@ python val.py \
 
 ```
 python val.py \
-       --config configs/pp_liteseg/pp_liteseg_stdc1_cityscapes_1024x512_scale1.0_160k.yml \
+       --config configs/bisenet/bisenet_cityscapes_1024x1024_160k.yml \
        --model_path output/iter_1000/model.pdparams \
        --is_slide \
        --crop_size 256 256 \
@@ -435,7 +435,7 @@ python val.py \
 在图像分割领域中，评估模型质量主要是通过三个指标进行判断，准确率（acc）、平均交并比（Mean Intersection over Union，简称mIoU）、Kappa系数。
 
 - 准确率：指类别预测正确的像素占总像素的比例，准确率越高模型质量越好。
-- 平均交并比：对每个类别数据集单独进行推理计算，计算出的预测区域和实际区域交集除以预测区域和实际区域的并集，然后将所有类别得到的结果取平均。在本例中，正常情况下模型在验证集上的mIoU指标值会达到0.80以上，显示信息示例如下所示，第3行的**mIoU=0.9196**即为mIoU。
+- 平均交并比：对每个类别数据集单独进行推理计算，计算出的预测区域和实际区域交集除以预测区域和实际区域的并集，然后将所有类别得到的结果取平均。在本例中，正常情况下模型在验证集上的mIoU指标值会达到0.80以上，显示信息示例如下所示，第4行的**mIoU=0.8350**即为mIoU。
 - Kappa系数：一个用于一致性检验的指标，可以用于衡量分类的效果。kappa系数的计算是基于混淆矩阵的，取值为-1到1之间，通常大于0。其公式如下所示，P0P_0*P*0为分类器的准确率，PeP_e*P**e*为随机分类器的准确率。Kappa系数越高模型质量越好。
 
 <img src="docs.assets/gif.latex" title="Kappa= \frac{P_0-P_e}{1-P_e}" />
@@ -444,15 +444,15 @@ python val.py \
 
 ```
 ...
-2022-11-03 20:16:27 [INFO]	Start evaluating (total_samples: 76, total_iters: 76)...
-76/76 [==============================] - 3s 45ms/step - batch_cost: 0.0452 - reader cost: 0.0058
-2022-11-03 20:16:30 [INFO]	[EVAL] #Images: 76 mIoU: 0.9196 Acc: 0.9969 Kappa: 0.9128 Dice: 0.9564
-2022-11-03 20:16:30 [INFO]	[EVAL] Class IoU: 
-[0.9969 0.8423]
-2022-11-03 20:16:30 [INFO]	[EVAL] Class Precision: 
-[0.9981 0.9307]
-2022-11-03 20:16:30 [INFO]	[EVAL] Class Recall: 
-[0.9987 0.8987]
+2022-11-04 18:13:52 [INFO]	Start evaluating (total_samples: 76, total_iters: 76)...
+76/76 [==============================] - 3s 45ms/step - batch_cost: 0.0453 - reader cost: 0.0020
+2022-11-04 18:13:56 [INFO]	[EVAL] #Images: 76 mIoU: 0.8350 Acc: 0.9932 Kappa: 0.8039 Dice: 0.9019
+2022-11-04 18:13:56 [INFO]	[EVAL] Class IoU: 
+[0.9931 0.6769]
+2022-11-04 18:13:56 [INFO]	[EVAL] Class Precision: 
+[0.9958 0.8453]
+2022-11-04 18:13:56 [INFO]	[EVAL] Class Recall: 
+[0.9974 0.7726]
 ```
 
 ## 3.3 模型预测
@@ -463,7 +463,7 @@ predict.py脚本是专门用来可视化预测案例的，命令格式如下所�
 
 ```
 python predict.py \
-       --config configs/pp_liteseg/pp_liteseg_stdc1_cityscapes_1024x512_scale1.0_160k.yml \
+       --config configs/bisenet/bisenet_cityscapes_1024x1024_160k.yml \
        --model_path output/iter_1000/model.pdparams \
        --image_path data/optic_disc_seg/JPEGImages/H0003.jpg \
        --save_dir output/result
@@ -531,7 +531,7 @@ python predict.py \
 在该分割结果中，前景以红色标明，背景以黑色标明。如果你想要使用其他颜色，可以参考如下命令：
 ```python
 python predict.py \
-       --config configs/pp_liteseg/pp_liteseg_stdc1_cityscapes_1024x512_scale1.0_160k.yml \
+       --config configs/bisenet/bisenet_cityscapes_1024x1024_160k.yml \
        --model_path output/iter_1000/model.pdparams \
        --image_path data/optic_disc_seg/JPEGImages/H0003.jpg \
        --save_dir output/result \
@@ -548,7 +548,7 @@ python predict.py \
 - 如果使用自定义color map，输入的`color值`的个数应该等于`3 * 像素种类`（取决于你所使用的数据集）。比如，你的数据集有 3 种像素，则可考虑执行:
 ```python
 python predict.py \
-       --config configs/pp_liteseg/pp_liteseg_stdc1_cityscapes_1024x512_scale1.0_160k.yml \
+       --config configs/bisenet/bisenet_cityscapes_1024x1024_160k.yml \
        --model_path output/iter_1000/model.pdparams \
        --image_path data/optic_disc_seg/JPEGImages/H0003.jpg \
        --save_dir output/result \
@@ -560,57 +560,58 @@ python predict.py \
 # 4 配置文件的说明
 
 正是因为有配置文件的存在，我们才可以使用更便捷的进行消融实验。在本章节中我们选择
-```configs/pp_liteseg_stdc1_cityscapes_1024x512_scale1.0_160k.yml```文件来进行配置文件的详细解读
+```configs/bisenet/bisenet_cityscapes_1024x1024_160k.yml```文件来进行配置文件的详细解读
 
 ## 4.1 整体配置文件格式综述
-我们将```pp_liteseg_stdc1_cityscapes_1024x512_scale1.0_160k.yml```进行拆分解释
-* **pp_liteseg** 表示模型的名称
-* **stdc1** 表示主干网络为叫stdc1的网络
-* **cityscapes** 表示该模型是基于cityscapes进行了训练，并提供了人该数据的预训练模型
-* **1024x512** 表示训练入网尺寸是1024X512， 假如原图是2048X2048，则会resize到1024X512进行训练
-* **scale1.0** 表示验证的时候时候输入网络的尺寸和入网尺寸一致。如果scale0.5则表示实际入网的图片是512x256
+我们将```bisenet_cityscapes_1024x1024_160k.yml```进行拆分解释
+* **bisenet** 表示模型的名称——指BiSeNetV2模型
+* **cityscapes** 表示该模型是基于cityscapes进行了训练，并提供了该数据的预训练模型
+* **1024x1024** 表示训练入网尺寸是1024X1024， 假如原图是2048X2048，则会resize到1024X1024进行训练
 * **160k** 表示训练160k个iters
 
 **配置文件示例说明**
 
-当前PaddleSeg为了降低配置冗余，将配置文件打散。要实现一个模型的训练，往往需要多个配置文件才可运行，如，我们现在选择的```pp_liteseg_stdc1_cityscapes_1024x512_scale1.0_160k.yml```，需要逐层依赖```pp_liteseg_stdc1_cityscapes_1024x512_scale0.5_160k.yml```和```_base_/cityscapes.yml```。
+当前PaddleSeg为了降低配置冗余，将配置文件打散。要实现一个模型的训练，往往需要多个配置文件才可运行，如，我们现在选择的```bisenet_cityscapes_1024x1024_160k.yml```，需要逐层依赖```_base_/cityscapes_1024x1024.yml```和```_base_/cityscapes.yml```。
 
 如果遇到相同的配置项，则直接使用的文件的地位最高，依赖文件越往后地位递减。
 如下图中，配置文件1的优先级高于配置文件2，高于配置文件3 如，配置文件1和配置文件3都具有train_datasets这一项，但是最终文件读取会以配置文件1填写的内容为主。
-<img width="1039" alt="image" src="https://user-images.githubusercontent.com/48433081/176415275-f3023f43-7de2-49cb-859c-10173519638c.png">
+![image-20221104111614823](docs.assets/image-20221104111614823.png)
 
 ## 4.2 数据路径与数据预处理说明
 这一小节主要是说明数据部分，当准备好数据，如何进行配置文件修改，以及该部分的配置文件有什么内容。
-如下是截取的是```pp_liteseg_stdc1_cityscapes_1024x512_scale1.0_160k.yml```配置。
+如下是截取的是```bisenet_cityscapes_1024x1024_160k.yml```配置。
 
 ``` bash
+_base_: '../_base_/cityscapes_1024x1024.yml'
+```
+这说明该模型数据加载依赖```cityscapes_1024x1024.yml```文件。
+
+```
+_base_: './cityscapes.yml'
+
 train_dataset:
-  type: Cityscapes
-  dataset_root: data/cityscapes
   transforms:
     - type: ResizeStepScaling
       min_scale_factor: 0.5
       max_scale_factor: 2.0
       scale_step_size: 0.25
     - type: RandomPaddingCrop
-      crop_size: [1024, 512]
+      crop_size: [1024, 1024]
     - type: RandomHorizontalFlip
     - type: RandomDistort
       brightness_range: 0.4
       contrast_range: 0.4
       saturation_range: 0.4
     - type: Normalize
-  mode: train
 
 val_dataset:
-  type: Cityscapes
-  dataset_root: data/cityscapes
   transforms:
     - type: Normalize
-  mode: val
 ```
-该配置是基于Cityscapes构建的，那我们自己创建好数据集，应该如何进行修改呢？
-如下给出一个自定义数据集
+
+而```cityscapes_1024x1024.yml```依赖于```cityscapes.yml```。因此该模型数据集的配置是基于Cityscapes构建的，那我们自己创建好数据集，应该如何进行修改呢？
+如下给出一个在```cityscapes.yml```中的自定义数据集
+
 ``` bash
 train_dataset:# 训练数据集
   type: Dataset #数据集类型，自定义数据集统一type均为Dataset
@@ -624,7 +625,7 @@ train_dataset:# 训练数据集
       max_scale_factor: 2.0
       scale_step_size: 0.25
     - type: RandomPaddingCrop ##从原始图像和标注图像中随机裁剪1024x512大小
-      crop_size: [1024, 512]
+      crop_size: [1024, 1024]
     - type: RandomHorizontalFlip #采用水平反转的方式进行数据增强
     - type: RandomDistort #亮度、对比度、饱和度随机变动
       brightness_range: 0.4
@@ -652,51 +653,42 @@ val_dataset:# 验证数据集
 * PaddleSeg提供了多种数据增强的方式，如Blur、Rotation、Aspect等，可以通过访问[损失函数说明](https://github.com/PaddlePaddle/PaddleSeg/blob/release/2.5/docs/module/data/data_cn.md)来进行后续的修改。
 
 ## 4.3 模型与主干网络说明
-当我们配置好数据后，下面在看关于模型和主干网络的选择(位于`pp_liteseg_stdc1_cityscapes_1024x512_scale0.5_160k.yml`中)
+当我们配置好数据后，下面在看关于模型和主干网络的选择(位于`bisenet_cityscapes_1024x1024_160k.yml`中)
 ``` bash
 model:
-  type: PPLiteSeg
-  backbone:
-    type: STDC1
-    pretrained: https://bj.bcebos.com/paddleseg/dygraph/PP_STDCNet1.tar.gz
-  arm_out_chs: [32, 64, 128]
-  seg_head_inter_chs: [32, 64, 64]
+  type: BiSeNetV2
+  num_classes: 2
 ```
   **note**
-* 我们模型的type是PPLiteSeg，
-* 主干网络是 STDC1，在这里我们可以自由更换，比如换成ResNet50_vd,不同的主干网络需要选择不同的参数。
-* 预训练模型 pretrained，我们这里可以加载其他的预先训练好的模型，如果我们不加载预先训练模型，可以在后面补充一个``null``
-* ``arm_out_chs``和``seg_head_inter_chs``此部分内容是根据模型特点来替换，不同的模型会有不同的参数。
+* 我们模型的type是BiSeNetV2
+* num_classes表示模型的预测类别数，需要改为实际数据集中分割的类别数
 ## 4.4 优化器和损失函数说明
-当我们配置好数据与模型后，下面再看关于优化器和损失函数的选择
+当我们配置好数据与模型后，下面再看关于优化器和损失函数的选择(位于`bisenet_cityscapes_1024x1024_160k.yml`中)
 ``` bash
 loss:
   types: # 损失函数的类型
-    - type: OhemCrossEntropyLoss
-      min_kept: 130000   # batch_size * 1024 * 512 // 16
-    - type: OhemCrossEntropyLoss
-      min_kept: 130000
-    - type: OhemCrossEntropyLoss
-      min_kept: 130000
-  coef: [1, 1, 1]
-  # PP-LiteSeg有一个主loss和两个辅助loss，coef表示权重： total_loss = coef_1 * loss_1 + .... + coef_n * loss_n
+    - type: CrossEntropyLoss
+    - type: CrossEntropyLoss
+    - type: CrossEntropyLoss
+    - type: CrossEntropyLoss
+    - type: CrossEntropyLoss
+  coef: [1, 1, 1, 1, 1]
+  # PP-LiteSeg有1个主loss和4个辅助loss，coef表示权重： total_loss = coef_1 * loss_1 + .... + coef_n * loss_n
 ```
   **note**
 * PaddleSeg提供了多种损失函数的选择
-BCELoss、BootstrappedCrossEntropyLoss、CrossEntropyLoss_cn、RelaxBoundaryLoss_cn等13种损失函数，可以通过访问[损失函数说明](https://github.com/PaddlePaddle/PaddleSeg/blob/release/2.5/README_CN.md)来进行后续的修改。
+BCELoss、BootstrappedCrossEntropyLoss、CrossEntropyLoss、RelaxBoundaryLoss等13种损失函数，可以通过访问[损失函数说明](https://github.com/PaddlePaddle/PaddleSeg/blob/release/2.5/README_CN.md)来进行后续的修改。
 
 ``` bash
 optimizer: #设定优化器的类型 目前只支持'sgd'和'adam'
   type: sgd #采用SGD（Stochastic Gradient Descent）随机梯度下降方法为优化器
-  momentum: 0.9 #动量
-  weight_decay: 4.0e-5 #权值衰减，使用的目的是防止过拟合
-
+  weight_decay: 0.0005 #权值衰减，使用的目的是防止过拟合
 
 lr_scheduler: # 学习率的相关设置
   type: PolynomialDecay # 一种学习率类型。共支持12种策略
-  learning_rate: 0.01 #目前paddleseg原始配置文件给出的都是四卡学习率。如果单卡训练，学习率初始值需要设置为原来的1/4.
-  power: 0.9
+  learning_rate: 0.05 #目前paddleseg原始配置文件给出的都是四卡学习率。如果单卡训练，学习率初始值需要设置为原来的1/4.
   end_lr: 0
+  power: 0.9
 ```
 **note**
 *  学习率策略类型支持有PolynomialDecay', 'PiecewiseDecay'等12种，相关可以参考
@@ -709,7 +701,7 @@ iters: 160000 #训练的步数
 ```
 
 ``` bash
-test_config: # 该项为进行训练时候开启验证
+test_config: # 该项为进行训练时候开启验证(若模型所属的yml中没有该项，可自行添加到yml文件末尾即可)
   aug_eval: True 
   scales: 1 #表示验证的时候时候输入网络的尺寸和入网尺寸一致。如果scale0.5则表示实际入网的图片是512x256
 ```
