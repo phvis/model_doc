@@ -895,7 +895,7 @@ PicoHeadV2: # 检测输出头网络配置
 epoch: 300 # 训练轮次
 
 LearningRate: # 学习率
-  base_lr: 0.32 # 基础学习率大小
+  base_lr: 0.32 # 基础学习率大小——单卡GPU需要除以4
   schedulers: # 学习率策略
   - !CosineDecay # 余弦衰减策略
     max_epochs: 300
@@ -914,9 +914,22 @@ OptimizerBuilder: # 优化器构建部分
 
 ## 4.5 其它参数说明
 
-`../runtime.yml`: 
-
 ```yaml
+_BASE_: [
+  '../datasets/voc.yml',
+  '../runtime.yml',
+  '_base_/picodet_v2.yml',
+  '_base_/optimizer_300e.yml',
+  '_base_/picodet_416_reader.yml',
+] # 基础依赖的配置文件
+
+# 是否寻找没用上的模型参数
+find_unused_parameters: True
+# 是否使用ema平均
+use_ema: true
+
+...
+
 use_gpu: true # 使用GPU
 use_xpu: false # 使用xpu
 log_iter: 20 # 日志输出间隔
@@ -930,3 +943,4 @@ export: # 模型导出的配置
   benchmark: False    # 不按照benchmark标准导出
   fuse_conv_bn: False # 不采用fuse_conv_bn
 ```
+
