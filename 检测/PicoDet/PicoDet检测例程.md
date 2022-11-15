@@ -142,7 +142,7 @@ LabelMe支持在Windows/macOS/Linux三个系统上使用，且三个系统下的
 
 ​        (1)   点击`OpenDir`打开待标注图片所在目录，点击`Create Polygons`，然后鼠标右键选择 create Retangle 沿着目标构建矩形框，绘制好区域后按下回车，然后输入目标的类别。在标注过程中，如果某一个矩形框画错了，可以按撤销快捷键可撤销该矩形框。Windows/Mac下的撤销快捷键为`command+Z`。(在选定矩形框后，后续只要不重新点击Create Polygons均保持为矩形框绘制)
 
-<div align=center>![image-20221115143657268](docs.assets/image-20221115143657268.png)</div>
+<div align=center>![image-20221115143657268](docs.assets/image-20221115143657268.png)
 
 <div align="center">
     <p>图2 选择矩形框进行目标框选的示意图</p>
@@ -150,13 +150,13 @@ LabelMe支持在Windows/macOS/Linux三个系统上使用，且三个系统下的
 
 ​		(2)   右击选择`Edit Polygons`可以整体移动矩形的位置，可以调整矩形大小，也可以选中后右键点击删除该的位置；右击选择`Edit Label还可以修改每个目标的类别。请根据自己的需要执行这一步骤，若不需要修改，可跳过。
 
-<div align=center>![image-20221115144229143](docs.assets/image-20221115144229143.png)</div>
+<div align=center>![image-20221115144229143](docs.assets/image-20221115144229143.png)
 
 <div align="center">
     <p>图3 点击Edit Ploygons后移动调整标注的示意图</p>
  </div>
 
-<div align=center>![image-20221115144241662](docs.assets/image-20221115144241662.png)</div>
+<div align=center>![image-20221115144241662](docs.assets/image-20221115144241662.png)
 
 <div align="center">
     <p>图4 点击Edit Ploygons后右键选中删除标注的示意图</p>
@@ -164,13 +164,13 @@ LabelMe支持在Windows/macOS/Linux三个系统上使用，且三个系统下的
 
 (3)   图片中所有目标的标注都完成后，点击`Save`保存json文件，**请将json文件和图片放在同一个文件夹里**，点击`Next Image`标注下一张图片(标注save完成后右侧图像原始路径旁会打勾)。
 
-<div align=center>![image-20221115144421143](docs.assets/image-20221115144421143.png)</div>
+<div align=center>![image-20221115144421143](docs.assets/image-20221115144421143.png)
 
 <div align="center">
     <p>图5 点击Save保存后点击下一张标注图像的示意图</p>
  </div>
 
-<div align=center>![image-20221115144552789](docs.assets/image-20221115144552789.png)</div>
+<div align=center>![image-20221115144552789](docs.assets/image-20221115144552789.png)
 
 <div align="center">
     <p>图5 标注结果的示意图</p>
