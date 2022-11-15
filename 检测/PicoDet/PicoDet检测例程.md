@@ -2,7 +2,9 @@
 
 本文重点介绍如何利用飞桨目标检测套件**PaddleDetection**在路标检测数据上，使用当前PaddleDetection主推的PP-PicoDet模型进行详细讲解。
 PP-PicoDet模型是PaddleDetection团队自研的轻量级目标检测模型，模型结构如下。
-![model](docs.assets/image-20221102133938490.png)
+
+<div align=center><img width="604" alt="image" src="docs.assets/image-20221102133938490.png"></div>
+
 PP-PicoDet模型更详细的原理介绍请参考[官网链接](https://github.com/PaddlePaddle/PaddleDetection)。
 
 ## 文章目录结构
@@ -50,7 +52,9 @@ PP-PicoDet模型更详细的原理介绍请参考[官网链接](https://github.c
 ### 1.1.1 安装对应版本PaddlePaddle
 
 根据系统和设备的cuda环境，选择对应的安装包，这里默认使用pip在linux设备上进行安装。
-<img width="821" alt="image" src="https://user-images.githubusercontent.com/48433081/176497642-0abf3de1-86d5-43af-afe8-f97db46b7fd9.png">
+
+<div align=center><img width="604" alt="image" src="https://user-images.githubusercontent.com/48433081/176497642-0abf3de1-86d5-43af-afe8-f97db46b7fd9.png"></div>
+
 在终端执行
 
 ```
@@ -76,7 +80,7 @@ paddle.utils.run_check()
 
 用户可以通过使用github或者gitee的方式进行下载，我们当前版本为PaddleDetection的release v2.5版本。后续在使用时，需要对应版本进行下载。
 
-![image-20221102134211058](docs.assets/image-20221102134211058.png)
+<div align=center><img width="604" alt="image" src="docs.assets/image-20221102134211058.png"></div>
 
 ``` bash
 # github下载
@@ -136,6 +140,7 @@ LabelMe支持在Windows/macOS/Linux三个系统上使用，且三个系统下的
     <p>图1 LableMe交互界面的示意图</p>
  </div>
 
+
    * 开始标注
 
 请按照下述步骤标注数据集：
@@ -148,6 +153,7 @@ LabelMe支持在Windows/macOS/Linux三个系统上使用，且三个系统下的
     <p>图2 选择矩形框进行目标框选的示意图</p>
  </div>
 
+
 ​		(2)   右击选择`Edit Polygons`可以整体移动矩形的位置，可以调整矩形大小，也可以选中后右键点击删除该的位置；右击选择`Edit Label还可以修改每个目标的类别。请根据自己的需要执行这一步骤，若不需要修改，可跳过。
 
 <div align=center><img width="604" alt="image" src="docs.assets/image-20221115144229143.png"></div>
@@ -156,11 +162,13 @@ LabelMe支持在Windows/macOS/Linux三个系统上使用，且三个系统下的
     <p>图3 点击Edit Ploygons后移动调整标注的示意图</p>
  </div>
 
+
 <div align=center><img width="604" alt="image" src="docs.assets/image-20221115144241662.png"></div>
 
 <div align="center">
     <p>图4 点击Edit Ploygons后右键选中删除标注的示意图</p>
  </div>
+
 
 (3)   图片中所有目标的标注都完成后，点击`Save`保存json文件，**请将json文件和图片放在同一个文件夹里**，点击`Next Image`标注下一张图片(标注save完成后右侧图像原始路径旁会打勾)。
 
@@ -170,11 +178,13 @@ LabelMe支持在Windows/macOS/Linux三个系统上使用，且三个系统下的
     <p>图5 点击Save保存后点击下一张标注图像的示意图</p>
  </div>
 
+
 <div align=center><img width="604" alt="image" src="docs.assets/image-20221115144552789.png"></div>
 
 <div align="center">
     <p>图5 标注结果的示意图</p>
  </div>
+
 
 ## 2.2 数据格式转化
 
@@ -482,7 +492,7 @@ visualdl --logdir output/
 
 在浏览器输入提示的网址，效果如下：
 
-![image-20221115161641438](docs.assets/image-20221115161641438.png)
+<div align=center><img width="604" alt="image" src="docs.assets/image-20221115161641438.png"></div>
 
 
 
@@ -509,7 +519,7 @@ python tools/eval.py -c configs/picodet/picodet_s_416_coco_lcnet.yml \
 
 图像保存在PaddleDetection/voc_pr_curve目录下，以下是其中一个类别的PR曲线图:
 
-![image-20221115164520441](docs.assets/image-20221115164520441.png)
+<div align=center><img width="604" alt="image" src="docs.assets/image-20221115164520441.png"></div>
 
 - 参数说明如下
 
@@ -535,11 +545,11 @@ python tools/eval.py -c configs/picodet/picodet_s_416_coco_lcnet.yml \
 
 - IOU: 预测目标与真实目标的交并比
 
-![image-20221115165025244](docs.assets/image-20221115165025244.png)
+<div align=center><img width="604" alt="image" src="docs.assets/image-20221115165025244.png"></div>
 
 - AP: 单个类别PR曲线下的面积，其中P为精确度，R为召回率。
 
-![image-20221115164911523](docs.assets/image-20221115164911523.png)
+<div align=center><img width="604" alt="image" src="docs.assets/image-20221115164911523.png"></div>
 
 - TP: 预测目标的IOU>设定的某一个IOU阈值且预测正确时的检测框数量
 - FP: 预测目标的IOU<设定的某一个IOU阈值且预测正确时/与单个真实框匹配后多余出来满足阈值的检测框数量
@@ -573,7 +583,7 @@ python tools/infer.py -c configs/picodet/picodet_s_416_coco_lcnet.yml \
 
 其中`--infer_img`是一张图片的路径，还可以用`--infer_dir`指定一个包含图片的目录，这时候将对该图片或文件列表或目录内的所有图片进行预测并保存可视化结果图。以下是预测的效果图:
 
-![image-20221115170212464](docs.assets/image-20221115170212464.png)
+<div align=center><img width="604" alt="image" src="docs.assets/image-20221115170212464.png"></div>
 
 如果需要保存预测结果bbox.json文件，可以使用以下指令:
 
@@ -660,7 +670,7 @@ python tools/infer.py -c configs/picodet/picodet_s_416_coco_lcnet.yml \
 
 由于每个模型对于依赖文件的情况大致相同，因此以yolov3模型的所有配置文件展开示意图为例对本文所实验的模型进行说明:
 
-![image-20221115172216292](docs.assets/image-20221115172216292.png)
+<div align=center><img width="604" alt="image" src="docs.assets/image-20221115172216292.png"></div>
 
 一个模型的配置文件按功能可以分为:
 
@@ -920,16 +930,3 @@ export: # 模型导出的配置
   benchmark: False    # 不按照benchmark标准导出
   fuse_conv_bn: False # 不采用fuse_conv_bn
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
