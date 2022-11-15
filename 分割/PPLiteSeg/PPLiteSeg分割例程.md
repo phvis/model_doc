@@ -217,9 +217,9 @@ paddlex --data_conversion --source labelme --to SEG --pics ./pics --annotations 
 在这里，我们依旧使用paddlex进行数据划分
 使用paddlex命令即可将数据集随机划分成70%训练集，20%验证集和10%测试集:
 ```bash
-paddlex --split_dataset --format SEG --dataset_dir D:\MyDataset --val_value 0.2 --test_value 0.1
+paddlex --split_dataset --format SEG --dataset_dir ./converted_dataset_dir --val_value 0.2 --test_value 0.1
 ```
-执行上面命令行，会在`D:\MyDataset`下生成`train_list.txt`, `val_list.txt`, `test_list.txt`，分别存储训练样本信息，验证样本信息，测试样本信息
+执行上面命令行，会在`./converted_dataset_dir`下生成`train_list.txt`, `val_list.txt`, `test_list.txt`，分别存储训练样本信息，验证样本信息，测试样本信息
 
 至此我们的数据就创作完成了，最终我们的产出形态应如下所示
 - 文件结构
@@ -301,7 +301,7 @@ val_dataset:
 ```
 **note**非常重要！！！
 
-* 关键改动的配置中的路径，这一个涉及相对路径，安装提示一步步来，确保最终能够完成。
+* 关键改动的配置中的路径，这一个涉及相对路径，安照提示一步步来，确保最终能够完成。
 
 * 本次项目中使用到的数据[下载链接](https://paddleseg.bj.bcebos.com/dataset/optic_disc_seg.zip)，本章节将使用视盘分割（optic disc segmentation）数据集进行训练，视盘分割是一组眼底医疗分割数据集，包含了267张训练图片、76张验证图片、38张测试图片。
 
@@ -350,7 +350,7 @@ python -m paddle.distributed.launch train.py \
        --save_dir output
 ```
 
-### 3.1.4 恢复训练：
+### 3.1.4 恢复训练
 ```bash
 python train.py \
        --config configs/pp_liteseg/pp_liteseg_stdc1_cityscapes_1024x512_scale1.0_160k.yml \
@@ -367,10 +367,9 @@ python train.py \
 PaddleSeg会将训练过程中的数据写入VisualDL文件，并实时的查看训练过程中的日志，记录的数据包括：
 1. loss变化趋势
 2. 学习率变化趋势
-3. 训练时间
-4. 数据读取时间
-5. mean IoU变化趋势（当打开了`do_eval`开关后生效）
-6. mean pixel Accuracy变化趋势（当打开了`do_eval`开关后生效）
+3. 日志记录时间
+4. mean IoU变化趋势（当打开了`do_eval`开关后生效）
+5. mean pixel Accuracy变化趋势（当打开了`do_eval`开关后生效）
 
 使用如下命令启动VisualDL查看日志
 ```bash
@@ -649,7 +648,7 @@ val_dataset:# 验证数据集
 
 * ``num_classes``切勿忘记背景类别。
 
-* PaddleSeg提供了多种数据增强的方式，如Blur、Rotation、Aspect等，可以通过访问[损失函数说明](https://github.com/PaddlePaddle/PaddleSeg/blob/release/2.5/docs/module/data/data_cn.md)来进行后续的修改。
+* PaddleSeg提供了多种数据增强的方式，如Blur、Rotation、Aspect等，可以通过访问[数据增强说明](https://github.com/PaddlePaddle/PaddleSeg/blob/release/2.5/docs/module/data/data_cn.md)来进行后续的修改。
 
 ## 4.3 模型与主干网络说明
 当我们配置好数据后，下面在看关于模型和主干网络的选择(位于`pp_liteseg_stdc1_cityscapes_1024x512_scale0.5_160k.yml`中)

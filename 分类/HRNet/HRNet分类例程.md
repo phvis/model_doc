@@ -430,7 +430,7 @@ python -m paddle.distributed.launch tools/train.py \
 	   -o Global.eval_during_train=True
 ```
 
-### 3.1.4 恢复训练：
+### 3.1.4 恢复训练
 
 ```bash
 python tools/train.py \
@@ -452,7 +452,7 @@ PaddleClas会将训练过程中的数据写入VisualDL文件，并实时的查�
 
 1. loss变化趋势
 2. 学习率变化趋势
-3. 训练时间
+3. 日志记录时间
 4. top1变化趋势
 5. top5变化趋势
 6. 评估精度(acc)变化趋势（当-o Global.eval_during_train=True开启后生效）
