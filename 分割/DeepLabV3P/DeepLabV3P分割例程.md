@@ -38,7 +38,7 @@ DeepLabV3P模型更详细的原理介绍请参考[官网论文](https://arxiv.or
   - 4.2 数据路径与数据预处理说明
   - 4.3 模型与主干网络说明
   - 4.4 优化器和损失函数说明
-  - 4.5 其他配置文件
+  - 4.5 其它参数说明
 
 # 1 环境安装
 
@@ -717,7 +717,7 @@ lr_scheduler: # 学习率的相关设置
 *  学习率策略类型支持有PolynomialDecay, PiecewiseDecay等12种，相关可以参考
 [学习率策略](https://www.paddlepaddle.org.cn/documentation/docs/zh/api/paddle/optimizer/lr/LRScheduler_cn.html)来进行后续的修改。
 
-## 4.5 其他参数说明
+## 4.5 其它参数说明
 ```yaml
 batch_size: 4  #批次大小，批次过大会导致显存爆炸
 iters: 40000 #训练的步数
