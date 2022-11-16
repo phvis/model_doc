@@ -1,11 +1,11 @@
 # 概述
 
-本文重点介绍如何利用飞桨目标检测套件**PaddleDetection**在路标检测数据上，使用当前PaddleDetection的PPYOLO-Tiny模型进行详细讲解。
-PPYOLO-Tiny模型是PaddleDetection团队自研的轻量级目标检测模型，其主体模型结构(PPYOLO)如下。
+本文重点介绍如何利用飞桨目标检测套件**PaddleDetection**在路标检测数据上，使用当前PaddleDetection的PP-YOLOE模型进行详细讲解。
+PP-YOLOE模型是PaddleDetection团队自研的高性能目标检测模型，其模型结构如下。
 
-<div align=center><img width="604" alt="image" src="docs.assets/image-20221115185534405.png"></div>
+<div align=center><img width="604" alt="image" src="docs.assets/image-20221115185845861.png"></div>
 
-PPYOLO-Tiny模型更详细的原理介绍请参考[官网链接](https://github.com/PaddlePaddle/PaddleDetection)。
+PP-YOLOE模型更详细的原理介绍请参考[官网链接](https://github.com/PaddlePaddle/PaddleDetection)。
 
 ## 文章目录结构
 
@@ -42,8 +42,6 @@ PPYOLO-Tiny模型更详细的原理介绍请参考[官网链接](https://github.
   - 4.3 模型与损失函数说明
   - 4.4 优化器说明
   - 4.5 其它参数说明
-
-
 
 # 1 环境安装
 
@@ -141,6 +139,7 @@ LabelMe支持在Windows/macOS/Linux三个系统上使用，且三个系统下的
  </div>
 
 
+
    * 开始标注
 
 请按照下述步骤标注数据集：
@@ -154,6 +153,7 @@ LabelMe支持在Windows/macOS/Linux三个系统上使用，且三个系统下的
  </div>
 
 
+
 ​		(2)   右击选择`Edit Polygons`可以整体移动矩形的位置，可以调整矩形大小，也可以选中后右键点击删除该的位置；右击选择`Edit Label还可以修改每个目标的类别。请根据自己的需要执行这一步骤，若不需要修改，可跳过。
 
 <div align=center><img width="604" alt="image" src="docs.assets/image-20221115144229143.png"></div>
@@ -163,11 +163,13 @@ LabelMe支持在Windows/macOS/Linux三个系统上使用，且三个系统下的
  </div>
 
 
+
 <div align=center><img width="604" alt="image" src="docs.assets/image-20221115144241662.png"></div>
 
 <div align="center">
     <p>图4 点击Edit Ploygons后右键选中删除标注的示意图</p>
  </div>
+
 
 
 (3)   图片中所有目标的标注都完成后，点击`Save`保存json文件，**请将json文件和图片放在同一个文件夹里**，点击`Next Image`标注下一张图片(标注save完成后右侧图像原始路径旁会打勾)。
@@ -179,11 +181,13 @@ LabelMe支持在Windows/macOS/Linux三个系统上使用，且三个系统下的
  </div>
 
 
+
 <div align=center><img width="604" alt="image" src="docs.assets/image-20221115144552789.png"></div>
 
 <div align="center">
     <p>图5 标注结果的示意图</p>
  </div>
+
 
 
 ## 2.2 数据格式转化
@@ -354,21 +358,21 @@ paddlex --split_dataset --format VOC --dataset_dir ./converted_dataset_dir --val
 
 ### 3.1.1 训练前准备
 
-我们可以通过PaddleDetection提供的脚本对模型进行训练，在本小节中我们使用PPYOLO-Tiny模型与`Road Sign Detection`数据集展示训练过程。 在训练之前，最重要的修改自己的数据情况，确保能够正常训练。
+我们可以通过PaddleDetection提供的脚本对模型进行训练，在本小节中我们使用PPYOLOE模型与`Road Sign Detection`数据集展示训练过程。 在训练之前，最重要的修改自己的数据情况，确保能够正常训练。
 
-在本项目中，我们使用```configs/ppyolo/ppyolo_tiny_650e_coco.yml```进行训练。
+在本项目中，我们使用```configs/ppyoloe/ppyoloe_crn_s_300e_coco.yml```进行训练。
 
-我们发现`ppyolo_tiny_650e_coco.yml`，需要逐层依赖`../datasets/coco_detection.yml`、`_base_/ppyolo_tiny.yml`、`_base_/optimizer_650e.yml` 、`_base_/ppyolo_tiny_reader.yml`、`../runtime.yml`。
+我们发现`ppyoloe_crn_s_300e_coco.yml`，需要逐层依赖`../datasets/coco_detection.yml`、`_base_/ppyoloe_crn.yml`、`_base_/optimizer_300e.yml` 、`_base_/ppyoloe_reader.yml`、`../runtime.yml`。
 
-由于后续使用数据为VOC格式数据，因此需要替换`ppyolo_tiny_650e_coco.yml`的依赖`../datasets/coco_detection.yml`为`../datasets/voc.yml`，然后再进行相应的数据配置修改，依赖修改如下:
+由于后续使用数据为VOC格式数据，因此需要替换`ppyoloe_crn_s_300e_coco.yml`的依赖`../datasets/coco_detection.yml`为`../datasets/voc.yml`，然后再进行相应的数据配置修改，依赖修改如下:
 
 ```yaml
 _BASE_: [
   '../datasets/voc.yml',
   '../runtime.yml',
-  './_base_/ppyolo_tiny.yml',
-  './_base_/optimizer_650e.yml',
-  './_base_/ppyolo_tiny_reader.yml',
+  './_base_/optimizer_300e.yml',
+  './_base_/ppyoloe_crn.yml',
+  './_base_/ppyoloe_reader.yml',
 ]
 ...
 ```
@@ -427,7 +431,7 @@ export CUDA_VISIBLE_DEVICES=0 # 设置1张可用的卡
 # windows下请执行以下命令
 # set CUDA_VISIBLE_DEVICES=0
 
-python tools/train.py -c configs/ppyolo/ppyolo_tiny_650e_coco.yml \
+python tools/train.py -c configs/ppyoloe/ppyoloe_crn_s_300e_coco.yml \
     -o save_dir=./output \
     --eval \
     --use_vdl=True \
@@ -456,7 +460,7 @@ python tools/train.py -c configs/ppyolo/ppyolo_tiny_650e_coco.yml \
 
 ```bash
 export CUDA_VISIBLE_DEVICES=0,1,2,3 # 设置4张可用的卡
-python tools/train.py -c configs/ppyolo/ppyolo_tiny_650e_coco.yml \
+python tools/train.py -c configs/ppyoloe/ppyoloe_crn_s_300e_coco.yml \
     -o save_dir=./output \
     --eval \
     --use_vdl=True \
@@ -466,8 +470,8 @@ python tools/train.py -c configs/ppyolo/ppyolo_tiny_650e_coco.yml \
 ### 3.1.4 恢复训练
 
 ```bash
-python tools/train.py -c configs/ppyolo/ppyolo_tiny_650e_coco.yml \
-	-r ./output/ppyolo_tiny_650e_coco/39 \
+python tools/train.py -c configs/ppyoloe/ppyoloe_crn_s_300e_coco.yml \
+	-r ./output/ppyoloe_crn_s_300e_coco/39 \
     -o save_dir=./output \
     --eval \
     --use_vdl=True \
@@ -491,32 +495,32 @@ visualdl --logdir output/
 
 在浏览器输入提示的网址，效果如下：
 
-<div align=center><img width="604" alt="image" src="docs.assets/image-20221116184709973.png"></div>
+<div align=center><img width="604" alt="image" src="docs.assets/image-20221116195217448.png"></div>
 
 ## 3.2 模型验证参数说明
 
 ### 3.2.1 评估操作
 
-训练完成后，用户可以使用评估脚本tools/eval.py来评估模型效果。假设训练过程中迭代轮次（epoch）为10，保存模型的间隔为1，即每迭代1次数据集保存1次训练模型。因此一共会产生10个定期保存的模型，加上保存的最佳模型`best_model`，一共有11个模型，可以通过`-o weights`指定期望评估的模型文件。
+训练完成后，用户可以使用评估脚本tools/eval.py来评估模型效果。假设训练过程中迭代轮次（epoch）为20，保存模型的间隔为10，即每迭代10次数据集保存1次训练模型。因此一共会产生2个定期保存的模型，加上保存的最佳模型`best_model`，一共有3个模型，可以通过`-o weights`指定期望评估的模型文件。
 
 ```bash
-python tools/eval.py -c configs/ppyolo/ppyolo_tiny_650e_coco.yml \
+python tools/eval.py -c configs/ppyoloe/ppyoloe_crn_s_300e_coco.yml \
 	-o use_gpu=true \
-	-o weights=./output/ppyolo_tiny_650e_coco/39
+	-o weights=./output/ppyoloe_crn_s_300e_coco/39
 ```
 
 如果获取评估后各个类别的PR曲线图像，可通过传入--classwise进行开启。使用示例如下：
 
 ```bash
-python tools/eval.py -c configs/ppyolo/ppyolo_tiny_650e_coco.yml \
+python tools/eval.py -c configs/ppyoloe/ppyoloe_crn_s_300e_coco.yml \
 	-o use_gpu=true \
-	-o weights=./output/ppyolo_tiny_650e_coco/39 \
+	-o weights=./output/ppyoloe_crn_s_300e_coco/39 \
 	--classwise
 ```
 
-图像保存在PaddleDetection/voc_pr_curve目录下，以下是其中一个类别的PR曲线图:
+图像保存在PaddleDetection/voc_pr_curve目录下，以下是其中一个类别的PR曲线图: 
 
-<div align=center><img width="604" alt="image" src="docs.assets/image-20221116120225315.png"></div>
+<div align=center><img width="604" alt="image" src="docs.assets/image-20221116194834087.png"></div>
 
 - 参数说明如下
 
@@ -557,11 +561,11 @@ python tools/eval.py -c configs/ppyolo/ppyolo_tiny_650e_coco.yml \
 
 ```bash
 ...
-[11/16 11:59:17] ppdet.utils.checkpoint INFO: Finish loading model weights: ./output/ppyolo_tiny_650e_coco/39.pdparams
-[11/16 11:59:19] ppdet.engine INFO: Eval iter: 0
-[11/16 11:59:20] ppdet.metrics.metrics INFO: Accumulating evaluatation results...
-[11/16 11:59:20] ppdet.metrics.metrics INFO: mAP(0.50, 11point) = 34.13%
-[11/16 11:59:20] ppdet.engine INFO: Total sample number: 176, averge FPS: 70.2323253600061
+[11/16 19:45:27] ppdet.utils.checkpoint INFO: Finish loading model weights: ./output/ppyoloe_crn_s_300e_coco/39.pdparams
+[11/16 19:45:28] ppdet.engine INFO: Eval iter: 0
+[11/16 19:45:35] ppdet.metrics.metrics INFO: Accumulating evaluatation results...
+[11/16 19:45:35] ppdet.metrics.metrics INFO: mAP(0.50, 11point) = 80.18%
+[11/16 19:45:35] ppdet.engine INFO: Total sample number: 176, averge FPS: 23.150172181163786
 ```
 
 ## 3.3 模型预测
@@ -571,23 +575,23 @@ python tools/eval.py -c configs/ppyolo/ppyolo_tiny_650e_coco.yml \
 tools/infer.py脚本是专门用来可视化预测案例的，命令格式如下所示：
 
 ```bash
-python tools/infer.py -c configs/ppyolo/ppyolo_tiny_650e_coco.yml \
+python tools/infer.py -c configs/ppyoloe/ppyoloe_crn_s_300e_coco.yml \
 	-o use_gpu=true \
-	-o weights=./output/ppyolo_tiny_650e_coco/39 \
+	-o weights=./output/ppyoloe_crn_s_300e_coco/39 \
 	--infer_img ./dataset/roadsign_voc/images/road470.png \
 	--output_dir ./output
 ```
 
 其中`--infer_img`是一张图片的路径，还可以用`--infer_dir`指定一个包含图片的目录，这时候将对该图片或文件列表或目录内的所有图片进行预测并保存可视化结果图。以下是预测的效果图:
 
-<div align=center><img width="604" alt="image" src="docs.assets/image-20221115170212464.png"></div>
+<div align=center><img width="604" alt="image" src="docs.assets/image-20221116194924366.png"></div>
 
 如果需要保存预测结果bbox.json文件，可以使用以下指令:
 
 ```bash
-python tools/infer.py -c configs/ppyolo/ppyolo_tiny_650e_coco.yml \
+python tools/infer.py -c configs/ppyoloe/ppyoloe_crn_s_300e_coco.yml \
 	-o use_gpu=true \
-	-o weights=./output/ppyolo_tiny_650e_coco/39 \
+	-o weights=./output/ppyoloe_crn_s_300e_coco/39 \
 	--infer_img ./dataset/roadsign_voc/images/road470.png \
     --output_dir ./output \
     --save_results=True
@@ -596,9 +600,9 @@ python tools/infer.py -c configs/ppyolo/ppyolo_tiny_650e_coco.yml \
 另外如果需要使用切片进行小目标检测时，可以通过以下指令进行:
 
 ```bash
-python tools/infer.py -c configs/ppyolo/ppyolo_tiny_650e_coco.yml \
+python tools/infer.py -c configs/ppyoloe/ppyoloe_crn_s_300e_coco.yml \
 	-o use_gpu=true \
-	-o weights=./output/ppyolo_tiny_650e_coco/39 \
+	-o weights=./output/ppyoloe_crn_s_300e_coco/39 \
 	--infer_img ./dataset/roadsign_voc/images/road470.png \
     --output_dir ./output \
     --save_results=True \
@@ -647,20 +651,21 @@ python tools/infer.py -c configs/ppyolo/ppyolo_tiny_650e_coco.yml \
 # 4 配置文件的说明
 
 正是因为有配置文件的存在，我们才可以使用更便捷的进行消融实验。在本章节中我们选择
-```configs/ppyolo/ppyolo_tiny_650e_coco.yml```文件来进行配置文件的详细解读
+```configs/ppyoloe/ppyoloe_crn_s_300e_coco.yml```文件来进行配置文件的详细解读
 
 ## 4.1 整体配置文件格式综述
 
-我们将```ppyolo_tiny_650e_coco.yml```进行拆分解释
+我们将```ppyoloe_crn_s_300e_coco.yml```进行拆分解释
 
-* **ppyolo** 表示模型的名称
-* **tiny** 表示模型类型系列，即tiny系列模型
-* **650e** 表示模型默认训练轮次
+* **ppyoloe** 表示模型的名称
+* **crn** 表示模型骨干网络，即CSPResNet模型
+* **s** 表示模型类型系列，即small系列模型
+* **300e** 表示模型默认训练轮次
 * **coco** 表示模型配置文件默认基于coco数据集训练，本文中的示例采用voc.yml来支持voc数据集的训练
 
 **配置文件示例说明**
 
-当前PaddleDetection为了降低配置冗余，将配置文件打散。要实现一个模型的训练，往往需要多个配置文件才可运行，如，我们现在选择的`ppyolo_tiny_650e_coco.yml`，需要逐层依赖`../datasets/coco_detection.yml`、`_base_/ppyolo_tiny.yml`、`_base_/optimizer_650e.yml` 、`_base_/ppyolo_tiny_reader.yml`、`../runtime.yml`。
+当前PaddleDetection为了降低配置冗余，将配置文件打散。要实现一个模型的训练，往往需要多个配置文件才可运行，如，我们现在选择的`ppyoloe_crn_s_300e_coco.yml`，需要逐层依赖`../datasets/coco_detection.yml`、`_base_/ppyoloe_crn.yml`、`_base_/optimizer_300e.yml` 、`_base_/ppyoloe_reader.yml`、`../runtime.yml`。
 
 如果遇到相同的配置项，则直接使用的文件的地位最高，依赖文件越往后地位递减——即主配置文件优先级最高。
 
@@ -670,13 +675,13 @@ python tools/infer.py -c configs/ppyolo/ppyolo_tiny_650e_coco.yml \
 
 一个模型的配置文件按功能可以分为:
 
-- **主配置文件入口**: ppyolo_tiny_650e_coco.yml
+- **主配置文件入口**: ppyoloe_crn_s_300e_coco.yml
 - **定义训练数据路径的配置文件**: ../datasets/coco_detection.yml
   - 本文中替换为voc.yml以支持该模型以voc数据集进行训练
 - **定义公共参数的配置文件**: ../runtime.yml
-- **定义优化器策略的配置文件**: \_base\_/optimizer_650e.yml
-- **定义模型和主干网络的配置文件**: \_base\_/ppyolo_tiny.yml
-- **定义数据预处理方式的配置文件**: \_base\_/ppyolo_tiny_reader.yml
+- **定义优化器策略的配置文件**: \_base\_/optimizer_300e.yml
+- **定义模型和主干网络的配置文件**: \_base\_/ppyoloe_crn.yml
+- **定义数据预处理方式的配置文件**: \_base\_/ppyoloe_reader.yml
 
 ## 4.2 数据路径与数据预处理说明
 
@@ -747,58 +752,56 @@ TestDataset:
     _BASE_: [
       '../datasets/voc.yml',
       '../runtime.yml',
-      './_base_/ppyolo_tiny.yml',
-      './_base_/optimizer_650e.yml',
-      './_base_/ppyolo_tiny_reader.yml',
+      './_base_/optimizer_300e.yml',
+      './_base_/ppyoloe_crn.yml',
+      './_base_/ppyoloe_reader.yml',
     ]
     ```
 
-  * 以上是ppyolo_tiny_650e_coco.yml中的修改位置
+  * 以上是ppyoloe_crn_s_300e_coco.yml中的修改位置
 
 **进一步地，可以根据需要配置数据预处理**
 
-在ppyolo_tiny_650e_coco.yml中采用的数据预处理配置文件为: \_base\_/ppyolo_tiny_reader.yml
+在ppyoloe_crn_s_300e_coco.yml中采用的数据预处理配置文件为: \_base\_/ppyoloe_reader.yml
 
 ```yaml
 worker_num: 4 # 数据加载时采用的线程数
+eval_height: &eval_height 640 # 评估输入图像的高，也是预测和模型导出时的模型输入图像大小
+eval_width: &eval_width 640 # 评估输入图像的宽，也是预测和模型导出时的模型输入图像大小
+eval_size: &eval_size [*eval_height, *eval_width] # 评估输入大小
+
 TrainReader: # 训练读取器配置
-  inputs_def: # 输入定义
-    num_max_boxes: 100 # 定义输入的最大box数量
   sample_transforms: # 采样预处理
     - Decode: {} # 读取图片并编码为图像数据
-    - Mixup: {alpha: 1.5, beta: 1.5} # Mixup数据增强处理
     - RandomDistort: {} # 对图像进行随机像素内容变换
     - RandomExpand: {fill_value: [123.675, 116.28, 103.53]} # 随机扩充
     - RandomCrop: {} # 随机裁剪
     - RandomFlip: {} # 随机翻转
   batch_transforms: # 批量预处理
-    - BatchRandomResize: {target_size: [192, 224, 256, 288, 320, 352, 384, 416, 448, 480, 512], random_size: True, random_interp: True, keep_ratio: False} # 批量随机缩放
-    - NormalizeBox: {} # 归一化box
-    - PadBox: {num_max_boxes: 100} # 填充box数量到100与输入定义一致
-    - BboxXYXY2XYWH: {} # Bbox的坐标数据转换预处理
+    - BatchRandomResize: {target_size: [320, 352, 384, 416, 448, 480, 512, 544, 576, 608, 640, 672, 704, 736, 768], random_size: True, random_interp: True, keep_ratio: False} # 批量随机缩放
     - NormalizeImage: {mean: [0.485, 0.456, 0.406], std: [0.229, 0.224, 0.225], is_scale: True} # 归一化图像
     - Permute: {} # 通道提前: 保证为(C,H,W)
-    - Gt2YoloTarget: {anchor_masks: [[6, 7, 8], [3, 4, 5], [0, 1, 2]], anchors: [[10, 15], [24, 36], [72, 42], [35, 87], [102, 96], [60, 170], [220, 125], [128, 222], [264, 266]], downsample_ratios: [32, 16, 8]} # 将标注数据转为Yolo架构的目标格式
-  batch_size: 32 # 训练的数据批大小
+    - PadGT: {} # 真实框填充
+  batch_size: 8 # 训练的数据批大小
   shuffle: true # 随机打乱采集的数据顺序
   drop_last: true # 每个轮次数据采集中最后一次批数据采集数量小于batch_size时进行丢弃
-  mixup_epoch: 500 # mixup增强使用的轮数
   use_shared_memory: true # 使用共享内存
+  collate_batch: true # 使用批量数据读取
 
 EvalReader: # 评估读取器配置
   sample_transforms: # 采样预处理
     - Decode: {} # 读取图片并编码为图像数据
-    - Resize: {target_size: [320, 320], keep_ratio: False, interp: 2} # 图像缩放
+    - Resize: {target_size: *eval_size, keep_ratio: False, interp: 2} # 图像缩放
     - NormalizeImage: {mean: [0.485, 0.456, 0.406], std: [0.229, 0.224, 0.225], is_scale: True} # 图像归一化
     - Permute: {} # 通道提前: 保证为(C,H,W)
-  batch_size: 8 # 评估的数据批大小
+  batch_size: 2 # 评估的数据批大小
 
 TestReader: # 预测读取器配置
   inputs_def: # 预测的输入定义
-    image_shape: [3, 320, 320] # 输入大小定义
+    image_shape: [3, *eval_height, *eval_width] # 输入大小定义
   sample_transforms: # 采样预处理
     - Decode: {} # 读取图片并编码为图像数据
-    - Resize: {target_size: [320, 320], keep_ratio: False, interp: 2} # 图像缩放
+    - Resize: {target_size: *eval_size, keep_ratio: False, interp: 2} # 图像缩放
     - NormalizeImage: {mean: [0.485, 0.456, 0.406], std: [0.229, 0.224, 0.225], is_scale: True} # 图像归一化
     - Permute: {} # 通道提前: 保证为(C,H,W)
   batch_size: 1 # 预测的数据批大小
@@ -806,80 +809,67 @@ TestReader: # 预测读取器配置
 
 **note**
 
-* 让模型评估或预测采用不同的大小，可以修改上述文件的以下位置参数大小来实现
-  * 如: EvalReader->sample_transforms->Resize->:target_size: [320, 320] 改成 target_size: [480, 480]
-  * 如: 
-    * TestReader->inputs_def->image_shape->:[3, 320, 320] 改成  [3, 480, 480]
-    * TestReader->sample_transforms->Resize->:target_size: [320, 320] 改成 target_size: [480, 480]
-    * 测试须要改以上两处
+* 让模型评估采用不同的大小，可以修改一开始的eval_height和eval_width来实现
 * PaddleDetection提供了多种数据增强的方式，可以通过访问[数据增强说明](https://github.com/PaddlePaddle/PaddleDetection/blob/release/2.5/docs/advanced_tutorials/READER.md#3.%E6%95%B0%E6%8D%AE%E9%A2%84%E5%A4%84%E7%90%86)来进行后续的修改。
 
 ## 4.3 模型与损失函数说明
 
-当我们配置好数据后，下面在看关于模型和主干网络的选择(位于\_base\_/ppyolo_tiny.yml中)
+当我们配置好数据后，下面在看关于模型和主干网络的选择(位于\_base\_/ppyoloe_crn.yml中)
 
 ```yaml
 architecture: YOLOv3 # 模型架构名称
-pretrain_weights: https://paddledet.bj.bcebos.com/models/pretrained/MobileNetV3_large_x0_5_pretrained.pdparams # 预训练模型路径
 norm_type: sync_bn # 模型中归一化层的类型
 use_ema: true # 是否使用ema平均
 ema_decay: 0.9998 # ema衰减因子
+ema_black_list: ['proj_conv.weight'] # 指定参数列表不参与ema计算
+custom_black_list: ['reduce_mean'] # 指定参数列表不参与amp计算时算子参数的float16精度转换
 
 YOLOv3: # 模型架构的配置
-  backbone: MobileNetV3 # 骨干网络
-  neck: PPYOLOTinyFPN # Neck特征融合网络
-  yolo_head: YOLOv3Head # 检测输出头网络
-  post_process: BBoxPostProcess # Bbox的后处理
+  backbone: CSPResNet # 骨干网络
+  neck: CustomCSPPAN # Neck特征融合网络
+  yolo_head: PPYOLOEHead # 检测输出头网络
+  post_process: ~ # 空的独立后处理
 
-MobileNetV3: # 骨干网络配置
-  model_name: large # 网络变种类型
-  scale: .5 # 模型大小比例
-  with_extra_blocks: false # 不添加额外的模块
-  extra_block_filters: [] # 没有额外模块的滤波模块
-  feature_maps: [7, 13, 16] # 骨干网络用于检测的特征所在网络层/stage的索引号
+CSPResNet: # 骨干网络配置
+  layers: [3, 6, 6, 3] # 每个stage的基础通道数
+  channels: [64, 128, 256, 512, 1024] # 进入第0个stage前的通道数以及每个stage输出特征的通道数
+  return_idx: [1, 2, 3] # 用于检测的特征对应的stage索引号
+  use_large_stem: True # 使用大的stem层作为输入特征的提取模块
 
-PPYOLOTinyFPN: # Neck特征融合网络配置
-  detection_block_channels: [160, 128, 96] # 输出特征通道数情况
+CustomCSPPAN: # Neck特征融合网络配置
+  out_channels: [768, 384, 192] # 输出特征的通道数
+  stage_num: 1 # 堆叠stage的数量
+  block_num: 3 # 每个中的基本模块数量
+  act: 'swish' # 使用swish激活函数
   spp: true # 使用SPP金字塔结构
-  drop_block: true # 使用下采样模块
 
-YOLOv3Head: # 检测输出头网络配置
-  anchors: [[10, 15], [24, 36], [72, 42],
-            [35, 87], [102, 96], [60, 170],
-            [220, 125], [128, 222], [264, 266]] # 指定一组anchor用于匹配目标
-  anchor_masks: [[6, 7, 8], [3, 4, 5], [0, 1, 2]] # 指定不同的特征使用哪些anchor
-  loss: YOLOv3Loss # 指定损失为YOLOv3损失
-
-YOLOv3Loss: # YOLOv3损失函数配置
-  ignore_thresh: 0.5 # 计算正样本损失的置信度阈值
-  downsample: [32, 16, 8] # 输入特征对应的下采样步长/比例
-  label_smooth: false # 不开启标签平滑
-  scale_x_y: 1.05 # x,y数据的缩放比例
-  iou_loss: IouLoss # 指定IOU损失类型
-
-IouLoss: # IOU损失函数配置
-  loss_weight: 2.5 # 损失权重系数
-  loss_square: true # 对损失值开根号
-
-BBoxPostProcess: # Bbox的后处理配置
-  decode: # 编码配置
-    name: YOLOBox # 编码格式
-    conf_thresh: 0.005 # 置信度阈值
-    downsample_ratio: 32 # 设置下采样比例
-    clip_bbox: true # 允许裁剪bbox
-    scale_x_y: 1.05 # x,y数据的缩放比例
-  nms: # 非极大值抑制后处理
+PPYOLOEHead: # 检测输出头网络配置
+  fpn_strides: [32, 16, 8] # fpn对于输入特征对应的下采样步长/比例
+  grid_cell_scale: 5.0 # 训练时由特征网格生成anchor时网格的尺度比例
+  grid_cell_offset: 0.5 # 训练时由特征网格生成anchor时网格的偏移值
+  static_assigner_epoch: 100 # 训练静态标签分配器的轮次
+  use_varifocal_loss: True # 使用varifocal_loss损失函数
+  loss_weight: {class: 1.0, iou: 2.5, dfl: 0.5} # 损失权重系数
+  static_assigner: # 静态标签分配器
+    name: ATSSAssigner
+    topk: 9
+  assigner: # 标签分配器
+    name: TaskAlignedAssigner
+    topk: 13
+    alpha: 1.0
+    beta: 6.0
+  nms: # 非极大值抑制后处理模块
     name: MultiClassNMS # NMS名称
-    keep_top_k: 100 # 经过NMS抑制后, 最终保留的最大检测数量。如果设置为 -1 ，则则保留全部
-    nms_threshold: 0.45 # 经过NMS衰减后，过滤掉低置信度分数的边界框的阈值
     nms_top_k: 1000 # 基于 score_threshold 的过滤检测后，根据置信度保留的最大检测数量
-    score_threshold: 0.005 # 过滤掉低置信度分数的边界框的阈值
+    keep_top_k: 300 # 经过NMS抑制后, 最终保留的最大检测数量。如果设置为 -1 ，则则保留全部
+    score_threshold: 0.01 # 过滤掉低置信度分数的边界框的阈值
+    nms_threshold: 0.7 # 经过NMS衰减后，过滤掉低置信度分数的边界框的阈值
 ```
 
   **note**
 
-* 我们模型的architecture是YOLOv3。
-* 主干网络是 MobileNetV3，在这里我们可以自由更换，比如换成ResNet50_vd, 不同的主干网络需要选择不同的参数。
+* 我们模型的architecture是YOLOv3
+* 主干网络是 CSPResNet
 * nms 此部分内容是预测与评估的后处理，一般可以根据需要调节threshold参数来优化处理效果。
 
 ## 4.4 优化器说明
@@ -887,20 +877,16 @@ BBoxPostProcess: # Bbox的后处理配置
 当我们配置好数据与模型后，下面再看关于优化器和损失函数的选择
 
 ```yaml
-epoch: 650 # 训练轮次
+epoch: 300 # 训练轮次
 
 LearningRate: # 学习率
-  base_lr: 0.005 # 基础学习率大小——单卡GPU需要除以8
+  base_lr: 0.01 # 基础学习率大小——单卡GPU需要除以8
   schedulers: # 学习率策略
-  - !PiecewiseDecay # 分段衰减策略
-    gamma: 0.1 # 衰减因子
-    milestones: # 衰减节点
-    - 430 # 第430轮时衰减第一次
-    - 540 # 第540轮时衰减第二次
-    - 610
-  - !LinearWarmup # 线性预热策略
-    start_factor: 0.
-    steps: 4000 # 预热步数为4000次迭代
+    - !CosineDecay # 余弦衰减策略
+      max_epochs: 360
+    - !LinearWarmup # 线性预热策略
+      start_factor: 0.
+      epochs: 5 # 预热步数为4000次迭代
 
 OptimizerBuilder: # 优化器构建部分
   optimizer: # 优化器
@@ -917,9 +903,9 @@ OptimizerBuilder: # 优化器构建部分
 _BASE_: [
   '../datasets/voc.yml',
   '../runtime.yml',
-  './_base_/ppyolo_tiny.yml',
-  './_base_/optimizer_650e.yml',
-  './_base_/ppyolo_tiny_reader.yml',
+  './_base_/optimizer_300e.yml',
+  './_base_/ppyoloe_crn.yml',
+  './_base_/ppyoloe_reader.yml',
 ] # 基础依赖的配置文件
 
 # 是否寻找没用上的模型参数
@@ -942,3 +928,10 @@ export: # 模型导出的配置
   benchmark: False    # 不按照benchmark标准导出
   fuse_conv_bn: False # 不采用fuse_conv_bn
 ```
+
+
+
+
+
+
+

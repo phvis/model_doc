@@ -656,7 +656,7 @@ python tools/infer.py -c configs/picodet/picodet_s_416_coco_lcnet.yml \
 我们将```picodet_s_416_coco_lcnet.yml```进行拆分解释
 
 * **picodet** 表示模型的名称
-* **s** 表示模型变种类型，即small变种模型
+* **s** 表示模型类型系列，即small系列模型
 * **416** 表示模型训练的目标图像大小
 * **coco** 表示模型配置文件默认基于coco数据集训练，本文中的示例采用voc.yml来支持voc数据集的训练
 * **lcnet** 表示模型的骨干网络类型
@@ -844,14 +844,14 @@ PicoHeadV2: # 检测输出头网络配置
     norm_type: bn # 归一化方式
     share_cls_reg: True # 共享最后分类与回归输出的模块参数
     use_se: True # 使用se激活函数
-  fpn_stride: [8, 16, 32, 64] # 特征金字塔对不同特征的不同步长
-  feat_in_chan: 128 # 特征金字塔的输入特征通道数
+  fpn_stride: [8, 16, 32, 64] # fpn的步长
+  feat_in_chan: 128 # 输入特征通道数
   prior_prob: 0.01
   reg_max: 7
   cell_offset: 0.5
   grid_cell_scale: 5.0
   static_assigner_epoch: 100 # 训练静态标签分配器的轮次
-  use_align_head: True # 特征在头部对齐
+  use_align_head: True # 头部特征对齐
   static_assigner: # 静态标签分配器
     name: ATSSAssigner
     topk: 9
@@ -882,7 +882,7 @@ PicoHeadV2: # 检测输出头网络配置
 
   **note**
 
-* 我们模型的architecture是PicoDet，
+* 我们模型的architecture是PicoDet。
 * 主干网络是 LCNet，在这里我们可以自由更换，比如换成ResNet50_vd, 不同的主干网络需要选择不同的参数。
 * nms 此部分内容是预测与评估的后处理，一般可以根据需要调节threshold参数来优化处理效果。
 

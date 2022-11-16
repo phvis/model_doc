@@ -572,7 +572,7 @@ python tools/infer.py \
 我们将```MobileNetV3_large_x1_0.yaml```进行拆分解释
 
 * **MobileNetV3**表示模型的名称
-* **large**表示模型的分支类型，完整模型为large，缩小模型为small
+* **large**表示模型类型系列，即large系列模型，还有缩小模型为small系列
 * **x1_0** 表示当前网络相对于标准large网络大小的缩放比例
 
 **引入配置文件的说明**
