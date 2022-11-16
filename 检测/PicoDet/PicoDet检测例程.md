@@ -500,7 +500,7 @@ visualdl --logdir output/
 
 ### 3.2.1 评估操作
 
-训练完成后，用户可以使用评估脚本tools/eval.py来评估模型效果。假设训练过程中迭代轮次（epoch）为300，保存模型的间隔为10，即每迭代10次数据集保存1次训练模型。因此一共会产生1个定期保存的模型，加上保存的最佳模型`best_model`，一共有2个模型，可以通过`-o weights`指定期望评估的模型文件。
+训练完成后，用户可以使用评估脚本tools/eval.py来评估模型效果。假设训练过程中迭代轮次（epoch）为20，保存模型的间隔为10，即每迭代10次数据集保存1次训练模型。因此一共会产生2个定期保存的模型，加上保存的最佳模型`best_model`，一共有3个模型，可以通过`-o weights`指定期望评估的模型文件。
 
 ```bash
 python tools/eval.py -c configs/picodet/picodet_s_416_coco_lcnet.yml \
