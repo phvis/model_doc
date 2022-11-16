@@ -1,11 +1,11 @@
 # 概述
 
-本文重点介绍如何利用飞桨目标检测套件**PaddleDetection**在路标检测数据上，使用当前PaddleDetection的PP-YOLOE模型进行详细讲解。
-PP-YOLOE模型是PaddleDetection团队自研的高性能目标检测模型，其模型结构如下。
+本文重点介绍如何利用飞桨目标检测套件**PaddleDetection**在路标检测数据上，使用当前PaddleDetection的PPYOLOE模型进行详细讲解。
+PPYOLOE模型是PaddleDetection团队自研的高性能目标检测模型，其模型结构如下。
 
 <div align=center><img width="604" alt="image" src="docs.assets/image-20221115185845861.png"></div>
 
-PP-YOLOE模型更详细的原理介绍请参考[官网链接](https://github.com/PaddlePaddle/PaddleDetection)。
+PPYOLOE模型更详细的原理介绍请参考[官网链接](https://github.com/PaddlePaddle/PaddleDetection)。
 
 ## 文章目录结构
 
