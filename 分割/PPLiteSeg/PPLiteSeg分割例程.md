@@ -265,8 +265,7 @@ paddlex --split_dataset --format SEG --dataset_dir ./converted_dataset_dir --val
 
 在本项目中，我们使用```configs/pp_liteseg_stdc1_cityscapes_1024x512_scale1.0_160k.yml```进行训练。
 
-我们发现
-```pp_liteseg_stdc1_cityscapes_1024x512_scale1.0_160k.yml```，需要逐层依赖```pp_liteseg_stdc1_cityscapes_1024x512_scale0.5_160k.yml```和```_base_/cityscapes.yml```。
+我们发现```pp_liteseg_stdc1_cityscapes_1024x512_scale1.0_160k.yml```，需要逐层依赖```pp_liteseg_stdc1_cityscapes_1024x512_scale0.5_160k.yml```和```_base_/cityscapes.yml```。
 
 在这里改动\_base\_/cityscapes.yml中文件的路径，修改为如下内容。
 ```yaml

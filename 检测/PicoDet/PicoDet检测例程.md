@@ -358,8 +358,7 @@ paddlex --split_dataset --format VOC --dataset_dir ./converted_dataset_dir --val
 
 在本项目中，我们使用```configs/picodet/picodet_s_416_coco_lcnet.yml```进行训练。
 
-我们发现
-`picodet_s_416_coco_lcnet.yml`，需要逐层依赖`../datasets/coco_detection.yml`、`_base_/picodet_v2.yml`、`_base_/optimizer_300e.yml` 、`_base_/picodet_416_reader.yml`、`../runtime.yml`。
+我们发现`picodet_s_416_coco_lcnet.yml`，需要逐层依赖`../datasets/coco_detection.yml`、`_base_/picodet_v2.yml`、`_base_/optimizer_300e.yml` 、`_base_/picodet_416_reader.yml`、`../runtime.yml`。
 
 由于后续使用数据为VOC格式数据，因此需要替换`picodet_s_416_coco_lcnet.yml`的依赖`../datasets/coco_detection.yml`为`../datasets/voc.yml`，然后再进行相应的数据配置修改，依赖修改如下:
 
@@ -873,7 +872,7 @@ PicoHeadV2: # 检测输出头网络配置
   loss_bbox: # 回归的损失
     name: GIoULoss
     loss_weight: 2.5
-  nms: # 极大值抑制后处理模块
+  nms: # 非极大值抑制后处理模块
     name: MultiClassNMS # NMS名称
     nms_top_k: 1000 # 基于 score_threshold 的过滤检测后，根据置信度保留的最大检测数量
     keep_top_k: 100 # 经过NMS抑制后, 最终保留的最大检测数量。如果设置为 -1 ，则则保留全部

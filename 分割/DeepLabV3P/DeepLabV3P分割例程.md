@@ -266,8 +266,7 @@ paddlex --split_dataset --format SEG --dataset_dir ./converted_dataset_dir --val
 
 在本项目中，我们使用```configs/deeplabv3p/deeplabv3p_resnet50_os8_voc12aug_512x512_40k.yml```进行训练。
 
-我们发现
-```deeplabv3p_resnet50_os8_voc12aug_512x512_40k.yml```，需要逐层依赖```_base_/pascal_voc12aug.yml```和```_base_/pascal_voc12.ym```。
+我们发现```deeplabv3p_resnet50_os8_voc12aug_512x512_40k.yml```，需要逐层依赖```_base_/pascal_voc12aug.yml```和```_base_/pascal_voc12.ym```。
 
 在这里改动\_base\_/pascal_voc12aug.yml中训练数据的模式，修改为如下内容:
 

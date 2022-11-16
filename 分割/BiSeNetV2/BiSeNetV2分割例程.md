@@ -265,8 +265,7 @@ paddlex --split_dataset --format SEG --dataset_dir ./converted_dataset_dir --val
 
 在本项目中，我们使用```configs/bisenet/bisenet_cityscapes_1024x1024_160k.yml```进行训练。
 
-我们发现
-```bisenet_cityscapes_1024x1024_160k.yml```，需要逐层依赖```_base_/cityscapes_1024x1024```和```_base_/cityscapes.yml```。
+我们发现```bisenet_cityscapes_1024x1024_160k.yml```，需要逐层依赖```_base_/cityscapes_1024x1024```和```_base_/cityscapes.yml```。
 
 在这里改动\_base\_/cityscapes.yml中文件的路径，修改为如下内容。
 ```yaml
