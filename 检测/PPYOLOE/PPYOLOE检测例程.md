@@ -765,7 +765,7 @@ TestDataset:
 在ppyoloe_crn_s_300e_coco.yml中采用的数据预处理配置文件为: \_base\_/ppyoloe_reader.yml
 
 ```yaml
-worker_num: 4 # 数据加载时采用的线程数
+worker_num: 4 # 每张GPU reader进程个数
 eval_height: &eval_height 640 # 评估输入图像的高，也是预测和模型导出时的模型输入图像大小
 eval_width: &eval_width 640 # 评估输入图像的宽，也是预测和模型导出时的模型输入图像大小
 eval_size: &eval_size [*eval_height, *eval_width] # 评估输入大小

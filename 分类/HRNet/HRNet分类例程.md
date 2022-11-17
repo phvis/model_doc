@@ -606,7 +606,7 @@ DataLoader: # 数据加载器配置部分
       drop_last: False # 不丢弃数据集末尾采样不足batch_size大的训练数据
       shuffle: True # 随机打乱训练数据顺序
     loader: # 数据加载其它参数配置
-      num_workers: 8 # 加载使用的线程数
+      num_workers: 8 # 每张GPU reader进程个数
       use_shared_memory: True # 加载使用共享内存
 
   Eval: # 验证数据加载部分
@@ -633,7 +633,7 @@ DataLoader: # 数据加载器配置部分
       drop_last: False # 不丢弃数据集末尾采样不足batch_size大的训练数据
       shuffle: False # 不随机打乱训练数据顺序
     loader: # 数据加载其它参数配置
-      num_workers: 4 # 加载使用的线程数
+      num_workers: 4 # 每张GPU reader进程个数
       use_shared_memory: True # 加载使用共享内存
 ```
 

@@ -760,7 +760,7 @@ TestDataset:
 在ppyolo_tiny_650e_coco.yml中采用的数据预处理配置文件为: \_base\_/ppyolo_tiny_reader.yml
 
 ```yaml
-worker_num: 4 # 数据加载时采用的线程数
+worker_num: 4 # 每张GPU reader进程个数
 TrainReader: # 训练读取器配置
   inputs_def: # 输入定义
     num_max_boxes: 100 # 定义输入的最大box数量
