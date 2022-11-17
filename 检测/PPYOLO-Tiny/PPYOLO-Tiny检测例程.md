@@ -383,15 +383,15 @@ num_classes: 4 # 数据的分类数(不包含类别背景)
 TrainDataset: # 训练数据集配置
   !VOCDataSet
     dataset_dir: dataset/roadsign_voc # 1.数据集所在根目录
-    anno_path: train.txt # 2.训练标注记录的txt: 即dataset/roadsign_voc/train.txt
-    label_list: label_list.txt # 3.训练类别记录的txt: 即dataset/roadsign_voc/label_list.txt
+    anno_path: train.txt # 2.标注记录的txt: 即dataset/roadsign_voc/train.txt
+    label_list: label_list.txt # 3.类别记录的txt: 即dataset/roadsign_voc/label_list.txt
     data_fields: ['image', 'gt_bbox', 'gt_class', 'difficult']
 
 EvalDataset: # 验证数据集配置
   !VOCDataSet
     dataset_dir: dataset/roadsign_voc # 1.数据集所在根目录
-    anno_path: valid.txt # 2.训练标注记录的txt: 即dataset/roadsign_voc/valid.txt
-    label_list: label_list.txt # 3.训练类别记录的txt: 即dataset/roadsign_voc/label_list.txt
+    anno_path: valid.txt # 2.标注记录的txt: 即dataset/roadsign_voc/valid.txt
+    label_list: label_list.txt # 3.类别记录的txt: 即dataset/roadsign_voc/label_list.txt
     data_fields: ['image', 'gt_bbox', 'gt_class', 'difficult']
 
 TestDataset: # 预测数据集配置
