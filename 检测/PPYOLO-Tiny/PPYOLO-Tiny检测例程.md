@@ -870,9 +870,9 @@ BBoxPostProcess: # Bbox的后处理配置
     scale_x_y: 1.05 # x,y数据的缩放比例
   nms: # 非极大值抑制后处理
     name: MultiClassNMS # NMS名称
-    keep_top_k: 100 # 经过NMS抑制后, 最终保留的最大检测数量。如果设置为 -1 ，则则保留全部
-    nms_threshold: 0.45 # 经过NMS衰减后，过滤掉低置信度分数的边界框的阈值
-    nms_top_k: 1000 # 基于 score_threshold 的过滤检测后，根据置信度保留的最大检测数量
+    keep_top_k: 100 # 经过NMS抑制后, 最终保留的最大检测框数量。如果设置为 -1 ，则保留全部
+    nms_threshold: 0.45 # 过滤掉其它与置信度最高的边界框的IoU大于该阈值的候选框
+    nms_top_k: 1000 # 基于 score_threshold 的过滤检测后，根据置信度保留的最大检测框数量
     score_threshold: 0.005 # 过滤掉低置信度分数的边界框的阈值
 ```
 
