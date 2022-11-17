@@ -699,15 +699,15 @@ num_classes: 4 # 数据的分类数(不包含类别背景)
 TrainDataset: # 训练数据集配置
   !VOCDataSet
     dataset_dir: dataset/roadsign_voc # 1.数据集所在根目录
-    anno_path: train.txt # 2.训练标注记录的txt: 即dataset/roadsign_voc/train.txt
-    label_list: label_list.txt # 3.训练类别记录的txt: 即dataset/roadsign_voc/label_list.txt
+    anno_path: train.txt # 2.标注记录的txt: 即dataset/roadsign_voc/train.txt
+    label_list: label_list.txt # 3.类别记录的txt: 即dataset/roadsign_voc/label_list.txt
     data_fields: ['image', 'gt_bbox', 'gt_class', 'difficult']
 
 EvalDataset: # 验证数据集配置
   !VOCDataSet
     dataset_dir: dataset/roadsign_voc # 1.数据集所在根目录
-    anno_path: valid.txt # 2.训练标注记录的txt: 即dataset/roadsign_voc/valid.txt
-    label_list: label_list.txt # 3.训练类别记录的txt: 即dataset/roadsign_voc/label_list.txt
+    anno_path: valid.txt # 2.标注记录的txt: 即dataset/roadsign_voc/valid.txt
+    label_list: label_list.txt # 3.类别记录的txt: 即dataset/roadsign_voc/label_list.txt
     data_fields: ['image', 'gt_bbox', 'gt_class', 'difficult']
 
 TestDataset: # 预测数据集配置
@@ -721,20 +721,20 @@ TestDataset: # 预测数据集配置
 metric: COCO # COCO数据集评价指标: 支持VOC与COCO两种
 num_classes: 80 # 数据的分类数(不包含类别背景)
 
-TrainDataset:
+TrainDataset: # 训练数据集配置
   !COCODataSet
-    image_dir: train2017 # 3.训练图像目录: 即dataset/coco/train2017
+    image_dir: train2017 # 3.图像目录: 即dataset/coco/train2017
     anno_path: annotations/instances_train2017.json # 2.标注记录的json: 即dataset/coco/annotations/instances_train2017.json
     dataset_dir: dataset/coco # 1.数据集所在根目录
     data_fields: ['image', 'gt_bbox', 'gt_class', 'is_crowd']
 
-EvalDataset:
+EvalDataset: # 验证数据集配置
   !COCODataSet
-    image_dir: val2017 # 3.训练图像目录: 即dataset/coco/val2017
+    image_dir: val2017 # 3.图像目录: 即dataset/coco/val2017
     anno_path: annotations/instances_val2017.json # 2.标注记录的json: 即dataset/coco/annotations/instances_val2017.json
     dataset_dir: dataset/coco # 1.数据集所在根目录
 
-TestDataset:
+TestDataset: # 预测数据集配置
   !ImageFolder
     anno_path: annotations/instances_val2017.json # 2.标注记录的json: 即dataset/coco/annotations/instances_val2017.json
     dataset_dir: dataset/coco # 1.数据集所在根目录
@@ -772,7 +772,7 @@ eval_size: &eval_size [*eval_height, *eval_width] # 评估输入大小
 
 TrainReader: # 训练读取器配置
   sample_transforms: # 采样预处理
-    - Decode: {} # 读取图片并编码为图像数据
+    - Decode: {} # 读取图片并解码为图像数据
     - RandomDistort: {} # 对图像进行随机像素内容变换
     - RandomExpand: {fill_value: [123.675, 116.28, 103.53]} # 随机扩充
     - RandomCrop: {} # 随机裁剪
@@ -786,11 +786,11 @@ TrainReader: # 训练读取器配置
   shuffle: true # 随机打乱采集的数据顺序
   drop_last: true # 每个轮次数据采集中最后一次批数据采集数量小于batch_size时进行丢弃
   use_shared_memory: true # 使用共享内存
-  collate_batch: true # 使用批量数据读取
+  collate_batch: true # 表示reader是否对gt进行组batch的操作
 
 EvalReader: # 评估读取器配置
   sample_transforms: # 采样预处理
-    - Decode: {} # 读取图片并编码为图像数据
+    - Decode: {} # 读取图片并解码为图像数据
     - Resize: {target_size: *eval_size, keep_ratio: False, interp: 2} # 图像缩放
     - NormalizeImage: {mean: [0.485, 0.456, 0.406], std: [0.229, 0.224, 0.225], is_scale: True} # 图像归一化
     - Permute: {} # 通道提前: 保证为(C,H,W)
@@ -800,7 +800,7 @@ TestReader: # 预测读取器配置
   inputs_def: # 预测的输入定义
     image_shape: [3, *eval_height, *eval_width] # 输入大小定义
   sample_transforms: # 采样预处理
-    - Decode: {} # 读取图片并编码为图像数据
+    - Decode: {} # 读取图片并解码为图像数据
     - Resize: {target_size: *eval_size, keep_ratio: False, interp: 2} # 图像缩放
     - NormalizeImage: {mean: [0.485, 0.456, 0.406], std: [0.229, 0.224, 0.225], is_scale: True} # 图像归一化
     - Permute: {} # 通道提前: 保证为(C,H,W)

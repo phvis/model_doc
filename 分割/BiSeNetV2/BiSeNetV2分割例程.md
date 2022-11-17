@@ -611,7 +611,7 @@ val_dataset:
 如下给出一个在```cityscapes.yml```中的自定义数据集
 
 ```yaml
-train_dataset:# 训练数据集
+train_dataset: # 训练数据集
   type: Dataset #数据集类型，自定义数据集统一type均为Dataset
   dataset_root: data/optic_disc_seg #数据集路径
   train_path: data/optic_disc_seg/train_list.txt  #根据该txt寻找验证的数据路径
@@ -632,7 +632,7 @@ train_dataset:# 训练数据集
     - type: Normalize #将图像归一化
   mode: train
 
-val_dataset:# 验证数据集
+val_dataset: # 验证数据集
   type: Dataset #数据集类型，自定义数据集统一type均为Dataset
   dataset_root: data/optic_disc_seg #数据集路径，在该路径下有所有的标注文件，图片和txt
   val_path: data/optic_disc_seg/train_list.txt  #根据该txt寻找验证的数据路径
