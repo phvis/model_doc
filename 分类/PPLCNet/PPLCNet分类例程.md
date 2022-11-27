@@ -98,9 +98,9 @@ paddle.utils.run_check()
 
 ```bash
 # github下载
-git clone https://github.com/PaddlePaddle/PaddleClas.git
+git clone -b release/2.5 https://github.com/PaddlePaddle/PaddleClas.git
 # gitee下载
-git clone https://gitee.com/PaddlePaddle/PaddleClas.git
+git clone -b release/2.5 https://gitee.com/PaddlePaddle/PaddleClas.git
 ```
 
 ### (2.2.2) 安装依赖项目
@@ -386,7 +386,7 @@ Infer:
 **Note**
 
 * 关键是改动配置中的路径，这一个涉及相对路径，安照提示一步步来，确保最终能够完成。
-* 本次项目中使用到的`KTH-TIPS`工业材料表面纹理数据集包含了810张图片，共10种分类，获取数据集的链接: 。
+* 本次项目中使用到的`KTH-TIPS`工业材料表面纹理数据集包含了810张图片，共10种分类，获取数据集的[链接](https://aistudio.baidu.com/aistudio/datasetdetail/179849) : 
   * 下载好数据集后，先进入`PaddleClas`的`dataset`目录下，然后创建`KTH_TIPS`文件夹，接着再把下载好的数据集放在该文件夹内，在该文夹内进行解压提取文件。
   * 解压好数据集后，执行以下脚本将数据按照`70%`用于训练、`20%`用于验证、`10%`用于测试进行划分。
 
@@ -519,7 +519,7 @@ python tools/train.py \
 visualdl --logdir outputs/vdl
 ```
 
-在浏览器输入提示的网址，效果如下：
+​		在浏览器输入提示的网址，效果如下：
 ![image-20221102212559298](PPLCNet分类例程.assets/image-20221102212559298.png)
 
 # (5) 模型验证与预测

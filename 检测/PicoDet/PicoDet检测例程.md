@@ -63,7 +63,7 @@
 
 ​		根据系统和设备的`cuda`环境，选择对应的安装包，这里默认使用`pip`在`linux`设备上进行安装。
 
-![176497642-0abf3de1-86d5-43af-afe8-f97db46b7fd9](../PPYOLOE/docs.assets/176497642-0abf3de1-86d5-43af-afe8-f97db46b7fd9.png)
+![176497642-0abf3de1-86d5-43af-afe8-f97db46b7fd9](docs.assets/176497642-0abf3de1-86d5-43af-afe8-f97db46b7fd9.png)
 
 ​		在终端中执行:
 
@@ -100,9 +100,9 @@ paddle.utils.run_check()
 
 ```bash
 # github下载
-git clone https://github.com/PaddlePaddle/PaddleDetection.git
+git clone -b release/2.5 https://github.com/PaddlePaddle/PaddleDetection.git
 # gitee下载
-git clone https://gitee.com/PaddlePaddle/PaddleDetection.git
+git clone -b release/2.5 https://gitee.com/PaddlePaddle/PaddleDetection.git
 ```
 
 ### (2.2.2) 安装依赖项目

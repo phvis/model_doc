@@ -100,9 +100,9 @@ paddle.utils.run_check()
 
 ```bash
 # github下载
-git clone https://github.com/PaddlePaddle/PaddleDetection.git
+git clone -b release/2.5 https://github.com/PaddlePaddle/PaddleDetection.git
 # gitee下载
-git clone https://gitee.com/PaddlePaddle/PaddleDetection.git
+git clone -b release/2.5 https://gitee.com/PaddlePaddle/PaddleDetection.git
 ```
 
 ### (2.2.2) 安装依赖项目
