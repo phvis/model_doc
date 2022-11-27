@@ -100,7 +100,7 @@ paddle.utils.run_check()
 # github下载
 git clone https://github.com/PaddlePaddle/PaddleClas.git
 # gitee下载
-git clone https://gitee.com/paddlepaddle/PaddleClas.git
+git clone https://gitee.com/PaddlePaddle/PaddleClas.git
 ```
 
 ### (2.2.2) 安装依赖项目
@@ -638,7 +638,7 @@ python tools/infer.py \
 
 ## (7.1) 整体配置文件格式综述
 
-​		我们将```PPLCNet_x1_0.yaml```进行拆分解释
+我们将```PPLCNet_x1_0.yaml```进行拆分解释
 
 * **PPLCNet** 表示模型的名称
 * **x1_0** 表示当前网络相对于标准网络大小的缩放比例

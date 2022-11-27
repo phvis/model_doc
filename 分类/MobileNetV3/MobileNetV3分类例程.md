@@ -102,7 +102,7 @@ paddle.utils.run_check()
 # github下载
 git clone https://github.com/PaddlePaddle/PaddleClas.git
 # gitee下载
-git clone https://gitee.com/paddlepaddle/PaddleClas.git
+git clone https://gitee.com/PaddlePaddle/PaddleClas.git
 ```
 
 ### (2.2.2) 安装依赖项目

@@ -100,7 +100,7 @@ paddle.utils.run_check()
 # github下载
 git clone https://github.com/PaddlePaddle/PaddleClas.git
 # gitee下载
-git clone https://gitee.com/paddlepaddle/PaddleClas.git
+git clone https://gitee.com/PaddlePaddle/PaddleClas.git
 ```
 
 ### (2.2.2) 安装依赖项目
@@ -637,7 +637,7 @@ python tools/infer.py \
 
 ## (7.1) 整体配置文件格式综述
 
-* 我们将```HRNet_W18_C.yaml```进行拆分解释
+我们将```HRNet_W18_C.yaml```进行拆分解释
 
   * **HRNet**表示模型的名称
   * **W18**表示模型的最小分支通道数(基础通道数)——W18对应模型的高分辨率多分支结构中的最小通道数为18
